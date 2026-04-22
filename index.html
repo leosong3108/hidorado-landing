@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Dorado — Send your Agent to do it.</title>
 <meta name="description" content="Dorado is an open-source Agent that operates on your behalf. It drives ChatGPT through long tasks, types @dorado into every AI composer, and hands signed context to other people's Agents. A2A, from day one." />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="apple-touch-icon" href="/favicon.svg" />
+<meta name="theme-color" content="#05070F" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
@@ -124,6 +127,19 @@
     0%, 100% { filter: drop-shadow(0 0 4px rgba(67,97,238,0.4)); }
     50%      { filter: drop-shadow(0 0 10px rgba(67,97,238,0.75)); }
   }
+  svg .spark {
+    animation: spark 2.2s ease-in-out infinite;
+    transform-origin: center;
+    transform-box: fill-box;
+  }
+  @keyframes spark {
+    0%, 100% { opacity: 0.55; }
+    50%      { opacity: 1;    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .brand .mark { animation: none; }
+    svg .spark   { animation: none; opacity: 0.95; }
+  }
   .nav-links {
     display: flex; gap: 26px; margin-left: 8px;
     font-size: 14px; color: var(--ink-soft);
@@ -220,6 +236,17 @@
     animation: pulse 1.6s ease-in-out infinite;
   }
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .hero-eyebrow .mini-mark {
+    width: 16px; height: 16px; flex-shrink: 0;
+    filter: drop-shadow(0 0 5px rgba(67,97,238,0.55));
+    animation: breathe 2.8s ease-in-out infinite;
+  }
+  .hero-eyebrow .mini-mark svg { width: 100%; height: 100%; display: block; }
+  .hero-eyebrow .mini-mark svg .spark {
+    animation: spark 2.2s ease-in-out infinite;
+    transform-origin: 24px 24px;
+    transform-box: fill-box;
+  }
 
   h1.hero-h {
     margin-top: 32px;
@@ -983,9 +1010,13 @@
     letter-spacing: 0.16em; text-transform: uppercase;
   }
   .trust-label b { color: var(--ink); font-weight: 500; }
-  .trust-items { display: flex; gap: 30px; flex-wrap: wrap; }
-  .trust-items span { display: inline-flex; align-items: center; gap: 8px; }
-  .trust-items .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+  .trust-items { display: flex; gap: 28px; flex-wrap: wrap; }
+  .trust-items span { display: inline-flex; align-items: center; gap: 9px; }
+  .trust-items .ai-ic {
+    width: 16px; height: 16px; flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .trust-items .ai-ic svg { width: 100%; height: 100%; display: block; }
 
   /* ─────────── FEATURES ─────────── */
   .features {
@@ -1346,7 +1377,7 @@
 <!-- ─────────── NAV ─────────── -->
 <nav class="nav" id="nav">
   <div class="nav-inner">
-    <a href="#top" class="brand"><span class="mark" aria-label="Dorado constellation"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g stroke="currentColor" stroke-width="0.7" stroke-linecap="round" opacity="0.5"><line x1="5" y1="5" x2="12" y2="9"/><line x1="12" y1="9" x2="17" y2="14"/><line x1="17" y1="14" x2="13" y2="20"/></g><circle cx="5" cy="5" r="0.95" fill="currentColor"/><circle cx="12" cy="9" r="1.4" fill="currentColor"/><circle cx="17" cy="14" r="1.1" fill="currentColor"/><circle cx="13" cy="20" r="1" fill="currentColor"/></svg></span><span class="wordmark"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span></a>
+    <a href="#top" class="brand"><span class="mark" aria-label="Dorado"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/><path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" fill-opacity="0.9"/><circle class="spark" cx="24" cy="24" r="1.8" fill="#F2F4FF"/></svg></span><span class="wordmark"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span></a>
     <div class="nav-links">
       <a href="#product"><span class="en">Product</span><span class="zh">产品</span></a>
       <a href="#how"><span class="en">How it works</span><span class="zh">原理</span></a>
@@ -1371,9 +1402,9 @@
   <div class="wrap">
     <div class="hero-inner">
       <span class="hero-eyebrow">
-        <span class="pulse"></span>
-        <span class="en">Agent-to-Agent · from day one</span>
-        <span class="zh">Agent-to-Agent · 第一天就在</span>
+        <span class="mini-mark" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/><path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" fill-opacity="0.9"/><circle class="spark" cx="24" cy="24" r="1.8" fill="#F2F4FF"/></svg></span>
+        <span class="en">DORADO · Send-Your-Agent Protocol</span>
+        <span class="zh">DORADO · 派你的 Agent 去做</span>
       </span>
 
       <h1 class="hero-h">
@@ -1473,10 +1504,10 @@
         <div class="scene-body delegate-body">
           <div class="del-left">
             <div class="del-card">
-              <div class="del-label mono"><span class="en">GOAL</span><span class="zh">目标</span></div>
+              <div class="del-label mono"><span class="en">DORADO · self-initiated</span><span class="zh">DORADO · 自主发起</span></div>
               <div class="del-goal serif">
-                <span class="en">"Write a 300-word investor memo about our pricing model — sharp voice, no hedging."</span>
-                <span class="zh">"写一篇 300 字的投资人 memo 解释我们的定价模型——语气要硬，不要打太极。"</span>
+                <span class="en">"Sarah keeps forwarding calendar invites. I should handle .ics myself — asking ChatGPT how."</span>
+                <span class="zh">"Sarah 每次日历邀请都转给我处理——.ics 我应该自己搞。问 ChatGPT 怎么做。"</span>
               </div>
               <div class="del-meta mono">
                 <span><i class="dot"></i><span class="en">via chatgpt</span><span class="zh">via chatgpt</span></span>
@@ -1487,16 +1518,16 @@
 
               <div class="del-review" id="delReview" style="display:none;">
                 <div class="del-review-k mono">
-                  <span class="en">dorado's review · in your voice</span>
-                  <span class="zh">dorado 的审稿 · 用你的语气</span>
+                  <span class="en">✓ NEW CAPABILITY DEPLOYED</span>
+                  <span class="zh">✓ 新能力已部署</span>
                 </div>
                 <div class="del-review-t serif">
-                  <span class="en">"Voice is too soft. Paragraph 2 needs sharper edges — you usually close with 'that's the reason, not up for discussion.'"</span>
-                  <span class="zh">"语气太软。第二段得更硬——你一贯是'这就是理由、没什么好讨论'的调子。"</span>
+                  <span class="en"><b>calendar.rsvp</b> · v0.1.0 — parses .ics invites, detects conflicts, drafts reply. Tested clean on 3/3 invites.</span>
+                  <span class="zh"><b>calendar.rsvp</b> · v0.1.0 — 解析 .ics 邀请，检测冲突，起草回复。3 条测试全部通过。</span>
                 </div>
                 <div class="del-review-act">
-                  <button class="btn-mini ok">✓ <span class="en">approve</span><span class="zh">通过</span></button>
-                  <button class="btn-mini"><span class="en">send back</span><span class="zh">打回</span></button>
+                  <button class="btn-mini ok">✓ <span class="en">enable</span><span class="zh">启用</span></button>
+                  <button class="btn-mini"><span class="en">review code</span><span class="zh">看代码</span></button>
                 </div>
               </div>
             </div>
@@ -1541,10 +1572,10 @@
               <span class="zh">dorado 胶囊已注入 · <b>312 tokens</b></span>
             </div>
             <div class="any-capsule-tags">
-              <span>identity · founder</span>
-              <span>stack · Next.js · Drizzle</span>
-              <span>style · no over-abstraction</span>
-              <span>+ 4 episodes</span>
+              <span>Mar 2 · chest pain, intermittent</span>
+              <span>Apr 9 · ferritin 18 · low</span>
+              <span>current · iron supp · day 11</span>
+              <span>+ 7 episodes</span>
             </div>
           </div>
 
@@ -1575,10 +1606,10 @@
               <span class="zh">你的 DORADO · 签发 →</span>
             </div>
             <div class="brg-form">
-              <div class="brg-row"><span class="k">to</span><span class="v" id="brgTo">alice@dorado</span></div>
-              <div class="brg-row"><span class="k">scope</span><span class="v" id="brgScope">project · PLM-architecture</span></div>
-              <div class="brg-row"><span class="k">ttl</span><span class="v accent" id="brgTtl">1 hour</span></div>
-              <div class="brg-row"><span class="k">capability</span><span class="v" id="brgCap">memory-snapshot · read</span></div>
+              <div class="brg-row"><span class="k">to</span><span class="v" id="brgTo">dr.chen@peak.dorado</span></div>
+              <div class="brg-row"><span class="k">scope</span><span class="v" id="brgScope">therapy · pain-journal · 90d</span></div>
+              <div class="brg-row"><span class="k">ttl</span><span class="v accent" id="brgTtl">session only · 2h</span></div>
+              <div class="brg-row"><span class="k">capability</span><span class="v" id="brgCap">read · no resharing</span></div>
               <div class="brg-row"><span class="k">signature</span><span class="v sig" id="brgSig">—</span></div>
             </div>
             <button class="btn-mini primary" id="brgSignBtn">
@@ -1596,13 +1627,13 @@
 
           <div class="brg-side brg-right">
             <div class="brg-side-k mono">
-              <span class="en">ALICE'S DORADO · receives ←</span>
-              <span class="zh">ALICE 的 DORADO · 收到 ←</span>
+              <span class="en">DR. CHEN'S DORADO · receives ←</span>
+              <span class="zh">CHEN 医生的 DORADO · 收到 ←</span>
             </div>
             <div class="brg-receive" id="brgReceive">
               <div class="brg-empty" id="brgEmpty"><span class="en">waiting for bundle…</span><span class="zh">等待 bundle 中…</span></div>
               <div class="brg-received" id="brgReceived" style="display:none;">
-                <div class="brg-row"><span class="k mono">bundle</span><span class="v">from leo@dorado</span></div>
+                <div class="brg-row"><span class="k mono">bundle</span><span class="v">from you@dorado</span></div>
                 <div class="brg-row"><span class="k mono">verify</span><span class="v"><span id="brgVerify" class="stream">checking…</span></span></div>
                 <div class="brg-row"><span class="k mono">loaded</span><span class="v" id="brgLoaded">—</span></div>
                 <div class="brg-countdown mono" id="brgCountdown">expires in 59:58</div>
@@ -1633,7 +1664,7 @@
           <div class="mem-main">
             <div class="mem-topbar mono">
               <span><span class="en">thread:</span><span class="zh">会话:</span></span>
-              <b>Dorado MVP / API architecture</b>
+              <b><span class="en">Life · check-in · how you've been</span><span class="zh">人生 · 状态自检</span></b>
             </div>
             <div class="mem-scroll" id="memScroll">
               <div class="bubble user" id="b-user">
@@ -1654,12 +1685,12 @@
 
           <aside class="mem-brain">
             <h4><span class="blink"></span><span class="en">Brain</span><span class="zh">记忆</span></h4>
-            <div class="scope mono"><span class="en">scope: <b>Dorado MVP</b></span><span class="zh">范围: <b>Dorado MVP</b></span></div>
+            <div class="scope mono"><span class="en">scope: <b>last 90 days</b></span><span class="zh">范围: <b>近 90 天</b></span></div>
             <div class="fact-list" id="factList">
-              <div class="fact"><div class="k">L1 · identity</div><div class="v"><span class="en">founder · NYU · CS</span><span class="zh">创始人 · NYU · CS</span></div></div>
-              <div class="fact"><div class="k">L1 · stack</div><div class="v">Next.js · Drizzle · pgvector</div></div>
-              <div class="fact"><div class="k">L2 · project</div><div class="v"><span class="en">Dorado MVP · API phase</span><span class="zh">Dorado MVP · API 阶段</span></div></div>
-              <div class="fact"><div class="k">L3 · episode · 5d</div><div class="v"><span class="en">chose pgvector, no abstractions</span><span class="zh">定 pgvector，不抽象</span></div></div>
+              <div class="fact"><div class="k">L1 · sleep</div><div class="v"><span class="en">avg 5.4h · down from 6.6h</span><span class="zh">均 5.4h · 比上月低 1.2h</span></div></div>
+              <div class="fact"><div class="k">L2 · signal</div><div class="v"><span class="en">"tired" · 4× in April vs 1× in March</span><span class="zh">"累" · 4 月 4 次（3 月仅 1 次）</span></div></div>
+              <div class="fact"><div class="k">L2 · work</div><div class="v"><span class="en">2 launches · no break since Feb</span><span class="zh">两次发版 · 2 月以来没休过</span></div></div>
+              <div class="fact"><div class="k">L3 · Apr 3</div><div class="v"><span class="en">"I want a vacation but don't feel I can"</span><span class="zh">"想放假，但不敢"</span></div></div>
             </div>
             <div class="foot mono">
               <span>L1 · L2 · L3</span>
@@ -1690,12 +1721,12 @@
       <span class="zh"><b>已支持</b> — 你正在用的那些 AI</span>
     </div>
     <div class="trust-items">
-      <span><span class="dot"></span>CHATGPT</span>
-      <span><span class="dot"></span>CLAUDE</span>
-      <span><span class="dot"></span>DEEPSEEK</span>
-      <span><span class="dot"></span>CURSOR</span>
-      <span><span class="dot"></span>CLAUDE CODE</span>
-      <span><span class="dot"></span>WINDSURF</span>
+      <span><span class="ai-ic"><svg viewBox="0 0 24 24" fill="#10A37F" xmlns="http://www.w3.org/2000/svg"><path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"/></svg></span>CHATGPT</span>
+      <span><span class="ai-ic"><svg viewBox="0 0 24 24" fill="#D97757" xmlns="http://www.w3.org/2000/svg"><path d="M17.3041 3.541h-3.6718l6.696 16.918H24Zm-10.6082 0L0 20.459h3.7442l1.3693-3.5527h7.0052l1.3693 3.5527h3.7442L10.5363 3.541Zm-.3712 10.2233 2.2948-5.9538 2.2948 5.9538Z"/></svg></span>CLAUDE</span>
+      <span><span class="ai-ic"><svg viewBox="0 0 24 24" fill="#4D6BFE" xmlns="http://www.w3.org/2000/svg"><path d="M23.748 4.482c-.254-.124-.364.113-.512.234-.051.039-.094.09-.137.136-.372.397-.806.657-1.373.626-.829-.046-1.537.214-2.163.848-.133-.782-.575-1.248-1.247-1.548-.352-.156-.708-.311-.955-.65-.172-.241-.219-.51-.305-.774-.055-.16-.11-.323-.293-.35-.2-.031-.278.136-.356.276-.313.572-.434 1.202-.422 1.84.027 1.436.633 2.58 1.838 3.393.137.093.172.187.129.323-.082.28-.18.552-.266.833-.055.179-.137.217-.329.14a5.526 5.526 0 0 1-1.736-1.18c-.857-.828-1.631-1.742-2.597-2.458a11.365 11.365 0 0 0-.689-.471c-.985-.957.13-1.743.388-1.836.27-.098.093-.432-.779-.428-.872.004-1.67.295-2.687.684a3.055 3.055 0 0 1-.465.137 9.597 9.597 0 0 0-2.883-.102c-1.885.21-3.39 1.102-4.497 2.623C.082 8.606-.231 10.684.152 12.85c.403 2.284 1.569 4.175 3.36 5.653 1.858 1.533 3.997 2.284 6.438 2.14 1.482-.085 3.133-.284 4.994-1.86.47.234.962.327 1.78.397.63.059 1.236-.03 1.705-.128.735-.156.684-.837.419-.961-2.155-1.004-1.682-.595-2.113-.926 1.096-1.296 2.746-2.642 3.392-7.003.05-.347.007-.565 0-.845-.004-.17.035-.237.23-.256a4.173 4.173 0 0 0 1.545-.475c1.396-.763 1.96-2.015 2.093-3.517.02-.23-.004-.467-.247-.588zm-11.282 13.488c-2.09-1.642-3.102-2.183-3.52-2.16-.392.024-.321.471-.235.763.09.288.207.486.371.739.114.167.192.416-.113.603-.673.416-1.842-.14-1.897-.167-1.361-.802-2.5-1.86-3.301-3.307-.774-1.393-1.224-2.887-1.298-4.482-.02-.386.093-.522.477-.592a4.696 4.696 0 0 1 1.529-.039c2.132.312 3.946 1.265 5.468 2.774.868.86 1.525 1.887 2.202 2.891.72 1.066 1.494 2.082 2.48 2.914.348.292.625.514.891.677-.802.09-2.14.11-3.054-.614zm1-6.44a.306.306 0 0 1 .307-.307.303.303 0 0 1 .108.022.303.303 0 0 1 .199.285.306.306 0 0 1-.306.307.306.306 0 0 1-.308-.307zm3.11 1.596c-.2.081-.399.151-.59.16a1.245 1.245 0 0 1-.798-.254c-.274-.23-.47-.358-.552-.758a1.73 1.73 0 0 1 .016-.588c.07-.327-.008-.537-.239-.727-.187-.156-.426-.199-.688-.199a.559.559 0 0 1-.254-.078c-.11-.054-.2-.19-.114-.358.028-.054.16-.186.192-.21.356-.202.767-.136 1.146.016.352.144.618.408 1.001.782.391.451.462.576.685.914.176.265.336.537.445.848.067.195-.019.354-.25.452z"/></svg></span>DEEPSEEK</span>
+      <span><span class="ai-ic"><svg viewBox="0 0 24 24" fill="#F2F4FF" xmlns="http://www.w3.org/2000/svg"><path d="M11.925 24l10.425-6-10.425-6L1.5 18l10.425 6z"/><path d="M22.35 18V6L11.925 0v12l10.425 6z" fill-opacity=".75"/><path d="M11.925 0L1.5 6v12l10.425-6V0z" fill-opacity=".5"/></svg></span>CURSOR</span>
+      <span><span class="ai-ic"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 4 L2 12 L5 20" stroke="#D97757" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 4 L22 12 L19 20" stroke="#D97757" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path fill="#D97757" d="M17.3041 6.541h-2.4478l4.464 10.918h2.448zM7.3918 6.541 2.9 17.459h2.4961l.9129-2.2685h4.6701l.9129 2.2685h2.4961L9.8909 6.541zm-.2474 6.5489 1.5299-3.8422 1.5299 3.8422z" transform="translate(0 -0.5)"/></svg></span>CLAUDE CODE</span>
+      <span><span class="ai-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#00C9A7" stroke-width="1.8" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg"><path d="M2 15 Q6 10 10 13 T18 12 Q20.5 10.5 22 9.5"/><path d="M3 9 Q7 5 11 7 T21 4.5" opacity="0.7"/></svg></span>WINDSURF</span>
     </div>
   </div>
 </div>
@@ -1901,7 +1932,7 @@
         <!-- YOUR AGENT · right -->
         <div class="cnode cnode-right cnode-agent">
           <div class="cnode-ic">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.9 2.6 2.6.9-2.6.9L19 22.5l-.9-2.6-2.6-.9 2.6-.9z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M 6 4 L 6 20 C 11 20, 13 17, 13 12 C 13 7, 11 4, 6 4 Z"/><path d="M 18 4 L 18 20 C 13 20, 11 17, 11 12 C 11 7, 13 4, 18 4 Z"/><circle class="spark" cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/></svg>
           </div>
           <div class="cnode-label"><span class="en">Your Agent</span><span class="zh">你的 Agent</span></div>
           <div class="cnode-sub"><span class="en">full context · L1·L2·L3</span><span class="zh">完整上下文 · L1·L2·L3</span></div>
@@ -1958,7 +1989,7 @@
         <!-- YOUR AGENT -->
         <div class="fnode fnode-agent">
           <div class="fnode-ic">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.9 2.6 2.6.9-2.6.9L19 22.5l-.9-2.6-2.6-.9 2.6-.9z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M 6 4 L 6 20 C 11 20, 13 17, 13 12 C 13 7, 11 4, 6 4 Z"/><path d="M 18 4 L 18 20 C 13 20, 11 17, 11 12 C 11 7, 13 4, 18 4 Z"/><circle class="spark" cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/></svg>
           </div>
           <div class="fnode-info">
             <div class="fnode-label"><span class="en">Your Agent</span><span class="zh">你的 Agent</span></div>
@@ -2113,7 +2144,7 @@
 
 <footer>
   <div class="footer-inner">
-    <a href="#top" class="brand"><span class="mark" aria-label="Dorado constellation"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g stroke="currentColor" stroke-width="0.7" stroke-linecap="round" opacity="0.5"><line x1="5" y1="5" x2="12" y2="9"/><line x1="12" y1="9" x2="17" y2="14"/><line x1="17" y1="14" x2="13" y2="20"/></g><circle cx="5" cy="5" r="0.95" fill="currentColor"/><circle cx="12" cy="9" r="1.4" fill="currentColor"/><circle cx="17" cy="14" r="1.1" fill="currentColor"/><circle cx="13" cy="20" r="1" fill="currentColor"/></svg></span><span class="wordmark"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span></a>
+    <a href="#top" class="brand"><span class="mark" aria-label="Dorado"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/><path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" fill-opacity="0.9"/><circle class="spark" cx="24" cy="24" r="1.8" fill="#F2F4FF"/></svg></span><span class="wordmark"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span></a>
     <div class="footer-links">
       <a href="/about"><span class="en">About</span><span class="zh">关于</span></a>
       <a href="https://github.com/leosong3108/dorado" target="_blank">GitHub</a>
@@ -2138,7 +2169,7 @@
     const cosR = Math.cos(ROT), sinR = Math.sin(ROT);
 
     // Static particle stores (regenerated on resize)
-    let stars = [], ring = [], core = [];
+    let stars = [], ring = [];
     const orbits = [];
 
     const seed = () => {
@@ -2152,39 +2183,48 @@
         tw: Math.random() * 6.28, ts: 0.22 + Math.random() * 0.7,
       }));
 
-      // disk ring grain — fine concentric particles
+      // disk ring system — density bands + gaps (Saturn-like structure)
       ring = [];
-      const minR = base * 0.18, maxR = base * 0.52;
-      const RINGS = 42;
-      for (let i = 0; i < RINGS; i++) {
-        const f = i / (RINGS - 1);
-        const rr = minR + (maxR - minR) * f;
-        // density peaks around the middle of the disk
-        const den = 80 + Math.sin(f * Math.PI) * 200 | 0;
-        for (let j = 0; j < den; j++) {
+      const bands = [
+        { r0: 0.18, r1: 0.23, den: 280, aMul: 0.7, tint: 0.1 },  // inner faint
+        { r0: 0.23, r1: 0.25, den: 40,  aMul: 0.3, tint: 0.0 },  // inner shadow
+        { r0: 0.25, r1: 0.34, den: 900, aMul: 1.0, tint: 0.3 },  // main bright (B-ring)
+        { r0: 0.34, r1: 0.36, den: 30,  aMul: 0.2, tint: 0.0 },  // Cassini gap
+        { r0: 0.36, r1: 0.44, den: 620, aMul: 0.85, tint: 0.5 }, // outer bright (A-ring)
+        { r0: 0.44, r1: 0.50, den: 160, aMul: 0.5, tint: 0.65 }, // outer fade
+      ];
+      const refR = base * 0.30; // reference radius for Keplerian speed
+      for (const b of bands) {
+        const rMin = base * b.r0, rMax = base * b.r1;
+        for (let j = 0; j < b.den; j++) {
+          const rr = rMin + Math.random() * (rMax - rMin);
+          // Size distribution: mostly tiny dust, some specks, rare bright
+          const roll = Math.random();
+          const sz = roll < 0.88 ? 0.35 + Math.random() * 0.3
+                   : roll < 0.975 ? 0.7 + Math.random() * 0.35
+                   : 1.1 + Math.random() * 0.6;
+          const bright = sz > 1.05;
           ring.push({
             th: Math.random() * 6.28,
-            r: rr + (Math.random() - 0.5) * (maxR - minR) * 0.012,
-            a: 0.06 + Math.random() * 0.3,
-            tw: Math.random() * 6.28, ts: 0.25 + Math.random() * 0.8,
-            hue: f,
+            r: rr,
+            sz: sz,
+            bright: bright,
+            a: (0.18 + Math.random() * 0.55) * b.aMul,
+            tw: Math.random() * 6.28,
+            ts: 0.25 + Math.random() * 0.65,
+            tint: b.tint,
+            // Keplerian differential rotation: inner faster, outer slower (∝ r^-1.5)
+            sp: Math.pow(refR / rr, 1.5),
           });
         }
       }
 
-      // central core — oblong seed of dense particles
-      core = [];
-      const cw = base * 0.15, ch = base * 0.065;
-      for (let i = 0; i < 420; i++) {
-        const ang = Math.random() * 6.28;
-        const rad = Math.pow(Math.random(), 0.55);
-        core.push({
-          x: Math.cos(ang) * rad * cw,
-          y: Math.sin(ang) * rad * ch,
-          a: 0.28 + Math.random() * 0.65,
-          tw: Math.random() * 6.28, ts: 0.5 + Math.random() * 1.2,
-        });
-      }
+      // Soft haze bands (dust layer behind the particles)
+      // stored as simple band ranges to draw per-frame
+      ring.hazeBands = [
+        { r: 0.30, w: 0.13, a: 0.09, tint: 0.3 },
+        { r: 0.40, w: 0.09, a: 0.07, tint: 0.5 },
+      ];
 
       // sweeping orbital paths with traveling bright particles
       orbits.length = 0;
@@ -2239,21 +2279,67 @@
         ctx.fill();
       }
 
-      // disk ring grain — slow rotation
-      const spin = reduce ? 0 : t * 0.012;
+      // ─── ring system ───
+      const base2 = Math.min(W, H);
+      const baseSpin = reduce ? 0 : t * 0.022;
+
+      // haze bands — soft dust glow drawn with additive blending
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.translate(CX, CY);
+      ctx.rotate(ROT);
+      ctx.scale(1, TILT);
+      for (const hb of ring.hazeBands) {
+        const inner = base2 * (hb.r - hb.w * 0.5);
+        const outer = base2 * (hb.r + hb.w * 0.5);
+        const hg = ctx.createRadialGradient(0, 0, inner, 0, 0, outer);
+        const R = 120 + (hb.tint * 60 | 0);
+        const G = 150 + (hb.tint * 40 | 0);
+        hg.addColorStop(0, `rgba(${R},${G},255,0)`);
+        hg.addColorStop(0.5, `rgba(${R},${G},255,${hb.a})`);
+        hg.addColorStop(1, `rgba(${R},${G},255,0)`);
+        ctx.fillStyle = hg;
+        ctx.beginPath();
+        ctx.arc(0, 0, outer, 0, 6.28);
+        ctx.fill();
+      }
+      ctx.restore();
+
+      // ring particles — differential rotation, size variation, far-side dimming
       for (const p of ring) {
-        const th = p.th + spin;
+        const th = p.th + baseSpin * p.sp;
         const x0 = Math.cos(th) * p.r;
         const y0 = Math.sin(th) * p.r * TILT;
         const px = CX + x0 * cosR - y0 * sinR + tx * 4;
         const py = CY + x0 * sinR + y0 * cosR + ty * 6;
+
+        // Far-side dimming: particles behind the disk plane get dimmer
+        // (in our projection, y0 < 0 is the back half after tilt)
+        const farDim = y0 < 0 ? 0.45 : 1.0;
+
         const tw = 0.6 + Math.sin(t * p.ts + p.tw) * 0.4;
-        const R = 184 + (p.hue * 22 | 0);
-        const G = 198 + (p.hue * 12 | 0);
+        const alpha = p.a * tw * farDim;
+
+        // Color: mostly cool blue-white, with warmer tint for higher-tint bands
+        const R = 200 + (p.tint * 50 | 0);
+        const G = 212 + (p.tint * 18 | 0);
+        const B = 255 - (p.tint * 10 | 0);
+
         ctx.beginPath();
-        ctx.arc(px, py, 0.7, 0, 6.28);
-        ctx.fillStyle = `rgba(${R},${G},255,${p.a * tw})`;
+        ctx.arc(px, py, p.sz, 0, 6.28);
+        ctx.fillStyle = `rgba(${R},${G},${B},${alpha})`;
         ctx.fill();
+
+        // Halo on bright specks
+        if (p.bright && alpha > 0.12) {
+          const gg = ctx.createRadialGradient(px, py, 0, px, py, p.sz * 4);
+          gg.addColorStop(0, `rgba(${R},${G},${B},${alpha * 0.7})`);
+          gg.addColorStop(1, `rgba(${R},${G},${B},0)`);
+          ctx.fillStyle = gg;
+          ctx.beginPath();
+          ctx.arc(px, py, p.sz * 4, 0, 6.28);
+          ctx.fill();
+        }
       }
 
       // central core glow
@@ -2263,17 +2349,6 @@
       cg.addColorStop(1, 'rgba(5,7,15,0)');
       ctx.fillStyle = cg;
       ctx.beginPath(); ctx.arc(CX, CY, Math.min(W, H) * 0.24, 0, 6.28); ctx.fill();
-
-      // central oblong seed (dense particle cloud)
-      for (const p of core) {
-        const px = CX + p.x * cosR - p.y * sinR + tx * 2;
-        const py = CY + p.x * sinR + p.y * cosR + ty * 3;
-        const tw = 0.5 + Math.sin(t * p.ts + p.tw) * 0.5;
-        ctx.beginPath();
-        ctx.arc(px, py, 0.82, 0, 6.28);
-        ctx.fillStyle = `rgba(232,235,255,${p.a * tw})`;
-        ctx.fill();
-      }
 
       // sweeping orbital arcs with a bright traveler on each
       for (const o of orbits) {
@@ -2475,17 +2550,17 @@
   async function playDelegate() {
     const isZh = lang() === 'zh';
     const conv = isZh ? [
-      { who: 'DORADO', cls: 'd', t: '帮我起草一篇 300 字关于定价模型的投资人 memo，语气硬一点。' },
-      { who: 'CHATGPT', cls: 'g', t: '好的，这是第一稿…「Dorado 的定价立足于数据留存率…」' },
-      { who: 'DORADO', cls: 'd', t: '第二段太软。重写成声明语气：「这就是理由」。' },
-      { who: 'CHATGPT', cls: 'g', t: '已改。开头仍保持第三人称，第二段改为陈述闭环…' },
-      { who: 'DORADO', cls: 'd', t: '结尾不要问句。结束要像盖章。' },
+      { who: 'DORADO', cls: 'd', t: '用户每次收到 Sarah 的 .ics 都手动转给我——我应该自己处理。需要解析 .ics + 起草 ACCEPT/DECLINE。最简方案？' },
+      { who: 'CHATGPT', cls: 'g', t: 'ical.js 库，50 行 TS。解析 SUMMARY/START/END、检测冲突、生成响应。要代码骨架吗？' },
+      { who: 'DORADO', cls: 'd', t: '要。加一层：冲突时不要自动 decline，拉出用户那个时段的事件，一起 preview。' },
+      { who: 'CHATGPT', cls: 'g', t: '给你：68 行，带 conflict-check。TTL 和时区的 edge case 都标在注释里。' },
+      { who: 'DORADO', cls: 'd', t: 'sandbox 跑了 Sarah 上周 3 条。全部解析干净。部署为 capability `calendar.rsvp` v0.1。' },
     ] : [
-      { who: 'DORADO', cls: 'd', t: 'Draft a 300-word memo on our pricing model. Keep the voice sharp.' },
-      { who: 'CHATGPT', cls: 'g', t: "Sure. Here's a first pass — \"Dorado's pricing is built around retention of captured data…\"" },
-      { who: 'DORADO', cls: 'd', t: "Paragraph 2 is hedging. Rewrite as declarative. 'That's the reason.'" },
-      { who: 'CHATGPT', cls: 'g', t: 'Updated. Paragraph 2 now reads as a closed argument, not a pitch.' },
-      { who: 'DORADO', cls: 'd', t: 'No question mark at the end. Land it like a stamp.' },
+      { who: 'DORADO', cls: 'd', t: "User keeps forwarding me Sarah's .ics invites manually — I should own this. Need to parse .ics + draft ACCEPT/DECLINE. Cleanest approach?" },
+      { who: 'CHATGPT', cls: 'g', t: "ical.js library, ~50 lines of TS. Parses SUMMARY/START/END, detects conflicts, generates responses. Want the scaffolding?" },
+      { who: 'DORADO', cls: 'd', t: "Yes. One more layer — on conflict, don't auto-decline; pull user's existing event at that slot and preview both." },
+      { who: 'CHATGPT', cls: 'g', t: "Here — 68 lines with conflict-check. TTL & timezone edge cases flagged in comments." },
+      { who: 'DORADO', cls: 'd', t: "Ran Sarah's 3 invites from last week in sandbox. All parsed clean. Deploying as capability `calendar.rsvp` v0.1." },
     ];
 
     if (delStatus) delStatus.textContent = isZh ? '驱动中' : 'driving';
@@ -2512,10 +2587,10 @@
       await wait(260);
     }
 
-    if (delStatus) delStatus.textContent = isZh ? '审稿' : 'reviewing';
+    if (delStatus) delStatus.textContent = isZh ? '部署中' : 'deploying';
     await wait(450);
     if (delReview) delReview.style.display = 'block';
-    if (delStatus) delStatus.textContent = isZh ? '等你批准' : 'awaiting you';
+    if (delStatus) delStatus.textContent = isZh ? '✓ 已部署' : '✓ deployed';
     scheduleNext(5600);
   }
 
@@ -2523,21 +2598,21 @@
   async function playAnywhere() {
     const isZh = lang() === 'zh';
     const prompt = isZh
-      ? 'help me design an API error handling strategy for my project'
-      : 'help me design an API error handling strategy for my project';
+      ? '明天看医生，帮我想想要问她什么'
+      : 'doctor appointment tomorrow — what should I ask her';
     const prefix = '@dorado ';
     const resp = isZh ? [
-      { t: '基于你的 ', c: 'ink' },
-      { t: 'Next.js + Drizzle', c: 'hl' },
-      { t: ' 技术栈，加上你一贯 ', c: 'ink' },
-      { t: '不过度抽象', c: 'hl' },
-      { t: ' 的风格——给你一个贴合项目形状的错误处理思路：在 route handler 外包一层 errorBoundary，内部抛，外层分类…', c: 'ink' },
+      { t: '拉了你 ', c: 'ink' },
+      { t: '3 个月 Dorado 里的健康记录', c: 'hl' },
+      { t: '——胸口刺痛记了两次、铁蛋白 18 偏低、铁剂第 5 天你说胃不舒服。明天建议问三件事：', c: 'ink' },
+      { t: '(1) 疲劳是不是贫血，还是得再查别的', c: 'hl' },
+      { t: '；(2) 是不是应该上完整铁代谢而不是只看铁蛋白；(3) 铁剂要不要换肠溶或换剂量。', c: 'ink' },
     ] : [
-      { t: 'Given your ', c: 'ink' },
-      { t: 'Next.js + Drizzle', c: 'hl' },
-      { t: ' stack and your ', c: 'ink' },
-      { t: 'no over-abstraction', c: 'hl' },
-      { t: ' rule, here is a thin error-handling shape: wrap route handlers with one errorBoundary, throw inside, classify at the edge — no custom error hierarchy, no try/catch noise.', c: 'ink' },
+      { t: "Reading across your ", c: 'ink' },
+      { t: '3 months of health notes Dorado has logged', c: 'hl' },
+      { t: " — chest pain flagged twice, ferritin 18 (low), and you said the iron supplement was rough on your stomach day 5. Three things to ask: ", c: 'ink' },
+      { t: '(1) is the fatigue anemia or something else still worth ruling out', c: 'hl' },
+      { t: "; (2) should we run a full iron panel, not just ferritin; (3) should the iron be enteric-coated or a different dose.", c: 'ink' },
     ];
 
     // type prefix first in plain, then mark @dorado as highlight after typed
@@ -2599,7 +2674,7 @@
     await wait(700);
     if (brgVerify) { brgVerify.textContent = isZh ? '已验签 ✓' : 'verified ✓'; brgVerify.className = 'v accent'; }
     await wait(500);
-    if (brgLoaded) brgLoaded.textContent = isZh ? '临时装载 · memory-snapshot' : 'temp loaded · memory-snapshot';
+    if (brgLoaded) brgLoaded.textContent = isZh ? '临时装载 · pain-journal' : 'temp loaded · pain-journal';
     if (brgState) brgState.textContent = isZh ? '对方装载中' : 'loaded';
 
     // countdown
@@ -2632,19 +2707,23 @@
   // ════ Scene 4 · MEMORY ════
   async function playMemory() {
     const isZh = lang() === 'zh';
-    const user = isZh ? '带我过一遍这个项目的 API 层架构' : 'walk me through the API layer of this project';
+    const user = isZh ? '说实话，你觉得我最近状态是不是不对？' : "be honest — am I actually doing okay lately?";
     const resp = isZh ? [
-      { t: '基于你上周决定用 ', c: 'ink' },
-      { t: 'Drizzle + pgvector', c: 'hl' },
-      { t: '，加上你讨厌 ', c: 'ink' },
-      { t: '过度抽象', c: 'hl' },
-      { t: ' — 我从最薄的 query 模块开始长。三个文件：schema、queries、routes。不做 repo 层，不做 DTO。', c: 'ink' },
+      { t: '说实话——我觉得不对。你自己的数据在说话：', c: 'ink' },
+      { t: '睡眠从 6.6 降到 5.4h', c: 'hl' },
+      { t: '，"累"这个词 4 月说了 ', c: 'ink' },
+      { t: '4 次（3 月只 1 次）', c: 'hl' },
+      { t: '，3 周前你跟我说 ', c: 'ink' },
+      { t: '"想放假但不敢"', c: 'hl' },
+      { t: '。你 2 月发完版就没停过。这周末强制放两天。这不是建议——是我看出来的规律。', c: 'ink' },
     ] : [
-      { t: "Based on last week's decision to use ", c: 'ink' },
-      { t: 'Drizzle + pgvector', c: 'hl' },
-      { t: ' and your rule against ', c: 'ink' },
-      { t: 'premature abstraction', c: 'hl' },
-      { t: " — start with the thinnest query module and grow outward. Three files: schema, queries, routes. No repo layer, no DTOs.", c: 'ink' },
+      { t: "Honestly? No. Your own data is saying it: ", c: 'ink' },
+      { t: 'sleep dropped from 6.6h to 5.4h', c: 'hl' },
+      { t: ', you said "tired" ', c: 'ink' },
+      { t: '4 times in April vs 1 in March', c: 'hl' },
+      { t: ', and three weeks ago you told me ', c: 'ink' },
+      { t: '"I want a vacation but don\'t feel I can"', c: 'hl' },
+      { t: ". You haven't stopped since the Feb launch. Take 2 days this weekend. That's not advice — it's the pattern.", c: 'ink' },
     ];
 
     await wait(450);

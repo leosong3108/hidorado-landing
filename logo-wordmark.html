@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dorado · wordmark explorations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --canvas: #05070F;
+    --ink: #F2F4FF;
+    --ink-soft: #A9B0C8;
+    --ink-ghost: #6C7596;
+    --accent: #4361EE;
+    --accent-hi: #748FFC;
+    --surface: #0B0E1C;
+    --hairline: rgba(232,235,255,0.1);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--canvas); color: var(--ink);
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    padding: 56px 48px 96px;
+    min-height: 100vh;
+  }
+  h1 {
+    font-size: 13px; letter-spacing: 0.2em; color: var(--accent-hi);
+    margin: 0 0 10px; text-transform: uppercase;
+    font-weight: 700;
+  }
+  .sub {
+    font-size: 12px; color: var(--ink-soft); margin: 0 0 48px;
+    font-family: "Inter", system-ui, sans-serif;
+    max-width: 720px; line-height: 1.6;
+  }
+  .variants {
+    display: grid; gap: 28px;
+    grid-template-columns: 1fr;
+    max-width: 920px;
+  }
+  .card {
+    border: 1px solid var(--hairline);
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 36px 40px;
+  }
+  .head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; }
+  .num { font-size: 11px; color: var(--accent); letter-spacing: 0.2em; }
+  .tag { font-size: 10px; color: var(--ink-ghost); letter-spacing: 0.15em; font-family: "Inter", sans-serif; text-transform: uppercase; }
+  .title {
+    font-size: 18px; color: var(--ink); letter-spacing: -0.01em;
+    margin: 0 0 8px; font-weight: 700;
+    font-family: "Inter", system-ui, sans-serif;
+  }
+  .desc {
+    font-size: 12px; color: var(--ink-soft); letter-spacing: 0.01em;
+    line-height: 1.6; margin: 0 0 28px;
+    font-family: "Inter", system-ui, sans-serif;
+    font-weight: 400;
+    max-width: 620px;
+  }
+
+  .stage {
+    background: radial-gradient(circle at 50% 50%, rgba(67,97,238,0.08), transparent 70%);
+    border: 1px solid rgba(116,143,252,0.08);
+    border-radius: 12px;
+    padding: 48px 32px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 18px;
+    min-height: 160px;
+  }
+
+  .row { display: flex; gap: 32px; align-items: center; flex-wrap: wrap; }
+  .row-label {
+    font-size: 10px; color: var(--ink-ghost); letter-spacing: 0.2em;
+    font-family: "Inter", sans-serif; text-transform: uppercase;
+    min-width: 74px;
+  }
+
+  .panel {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .pbox {
+    border: 1px solid var(--hairline);
+    border-radius: 10px;
+    padding: 18px 20px;
+    display: flex; align-items: center; gap: 14px;
+    background: rgba(255,255,255,0.015);
+  }
+  .pbox.light { background: #FDFCFA; border-color: transparent; }
+  .pbox.light * { color: #1A1D2E !important; }
+  .pbox.light .md { color: #4361EE !important; }
+
+  .solo {
+    display: flex; gap: 14px; align-items: center;
+  }
+  .solo .chip {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: linear-gradient(180deg, #0F1324, #050710);
+    border: 1px solid rgba(116,143,252,0.18);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .solo .chip.sm { width: 32px; height: 32px; border-radius: 8px; }
+  .solo .chip.xs { width: 22px; height: 22px; border-radius: 6px; }
+
+  /* ─────────────────────────────
+     TYPE STYLES per variant
+     ───────────────────────────── */
+
+  /* V1 · Do·ra·Do with bar under 'ra' */
+  .v1-big {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 800;
+    font-size: 76px;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    display: inline-flex; align-items: baseline;
+  }
+  .v1-big .bk { color: var(--ink); }
+  .v1-big .md {
+    color: var(--accent-hi);
+    position: relative;
+    padding: 0 2px;
+  }
+  .v1-big .md::after {
+    content: ""; position: absolute;
+    left: 4px; right: 4px; bottom: -12px;
+    height: 4px; background: var(--accent);
+    border-radius: 2px;
+    box-shadow: 0 0 12px rgba(67,97,238,0.7);
+  }
+  .v1-mid {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 700; font-size: 22px;
+    letter-spacing: 0.01em;
+  }
+  .v1-mid .bk { color: var(--ink); }
+  .v1-mid .md {
+    color: var(--accent-hi);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 1px;
+  }
+  .v1-small {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 700; font-size: 15px;
+    letter-spacing: 0.02em;
+  }
+  .v1-small .bk { color: var(--ink); }
+  .v1-small .md {
+    color: var(--accent-hi);
+    border-bottom: 1.5px solid var(--accent);
+  }
+
+  /* V2 · DD lens mark + wordmark */
+  .v2-big { display: inline-flex; align-items: center; gap: 22px; }
+  .v2-big svg { filter: drop-shadow(0 0 14px rgba(67,97,238,0.5)); }
+  .v2-big .txt {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 700; font-size: 64px;
+    letter-spacing: -0.015em; line-height: 1;
+  }
+  .v2-big .txt .bk { color: var(--ink); }
+  .v2-big .txt .md { color: var(--accent-hi); }
+
+  .v2-mid { display: inline-flex; align-items: center; gap: 10px; }
+  .v2-mid svg { filter: drop-shadow(0 0 5px rgba(67,97,238,0.5)); }
+  .v2-mid .txt { font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 22px; letter-spacing: 0.01em; }
+  .v2-mid .txt .bk { color: var(--ink); }
+  .v2-mid .txt .md { color: var(--accent-hi); }
+
+  .v2-small { display: inline-flex; align-items: center; gap: 7px; }
+  .v2-small svg { filter: drop-shadow(0 0 4px rgba(67,97,238,0.5)); }
+  .v2-small .txt { font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 15px; letter-spacing: 0.02em; }
+  .v2-small .txt .bk { color: var(--ink); }
+  .v2-small .txt .md { color: var(--accent-hi); }
+
+  /* V3 · chevron + wordmark */
+  .v3-big { display: inline-flex; align-items: baseline; gap: 18px; }
+  .v3-big .chev {
+    font-family: "JetBrains Mono", monospace; font-weight: 800;
+    font-size: 70px; color: var(--accent);
+    line-height: 1;
+    text-shadow: 0 0 22px rgba(67,97,238,0.65);
+  }
+  .v3-big .txt {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 700; font-size: 68px;
+    letter-spacing: -0.02em; line-height: 1;
+  }
+  .v3-big .txt .bk { color: var(--ink); }
+  .v3-big .txt .md { color: var(--accent-hi); }
+
+  .v3-mid { display: inline-flex; align-items: baseline; gap: 8px; }
+  .v3-mid .chev { font-family: "JetBrains Mono", monospace; font-weight: 800; color: var(--accent); font-size: 22px; text-shadow: 0 0 8px rgba(67,97,238,0.6); }
+  .v3-mid .txt { font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 22px; letter-spacing: 0.01em; }
+  .v3-mid .txt .bk { color: var(--ink); }
+  .v3-mid .txt .md { color: var(--accent-hi); }
+
+  .v3-small { display: inline-flex; align-items: baseline; gap: 5px; }
+  .v3-small .chev { font-family: "JetBrains Mono", monospace; font-weight: 800; color: var(--accent); font-size: 15px; }
+  .v3-small .txt { font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 15px; letter-spacing: 0.02em; }
+  .v3-small .txt .bk { color: var(--ink); }
+  .v3-small .txt .md { color: var(--accent-hi); }
+
+  /* light variant colors inside .pbox.light */
+  .pbox.light .v1-big .md::after,
+  .pbox.light .v2-big svg,
+  .pbox.light .v3-big .chev { color: #4361EE; }
+  .pbox.light .v3-big .chev { text-shadow: none; }
+  .pbox.light svg { filter: none !important; }
+</style>
+</head>
+<body>
+  <h1>Dorado · wordmark explorations</h1>
+  <p class="sub">Three directions with the wordmark as the hero — no symbolic mascot. Each variant includes a "solo mark" (16–44px) for favicons and UI corners where the full wordmark doesn't fit. Pick the one that clicks, I'll polish and ship it to landing + product + favicons.</p>
+
+  <div class="variants">
+
+    <!-- ─────── V1 · BAR UNDER RA ─────── -->
+    <div class="card">
+      <div class="head">
+        <span class="num">V1</span>
+        <span class="tag">typographic · no symbol</span>
+      </div>
+      <h2 class="title">Do<span style="color:var(--accent-hi)">ra</span>Do · underline</h2>
+      <p class="desc">Pure wordmark. Do/ra/Do rhythm emphasized: white · accent with underline · white. The bar under "ra" reads as a foundation / anchor / agent rail. Zero symbol — the word is the brand. Solo mark is just a lowercase "d" with the same bar.</p>
+
+      <div class="stage">
+        <span class="v1-big"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span>
+      </div>
+
+      <div class="panel">
+        <div class="pbox">
+          <span class="v1-mid"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span>
+        </div>
+        <div class="pbox light">
+          <span class="v1-mid"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top: 18px">
+        <span class="row-label">Solo mark</span>
+        <div class="solo">
+          <div class="chip">
+            <svg width="28" height="28" viewBox="0 0 32 32">
+              <text x="16" y="23" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="22" font-weight="800" fill="#F2F4FF">d</text>
+              <rect x="9" y="25" width="14" height="3" rx="1.5" fill="#4361EE"/>
+            </svg>
+          </div>
+          <div class="chip sm">
+            <svg width="20" height="20" viewBox="0 0 32 32">
+              <text x="16" y="23" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="22" font-weight="800" fill="#F2F4FF">d</text>
+              <rect x="9" y="25" width="14" height="3" rx="1.5" fill="#4361EE"/>
+            </svg>
+          </div>
+          <div class="chip xs">
+            <svg width="14" height="14" viewBox="0 0 32 32">
+              <text x="16" y="23" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="22" font-weight="800" fill="#F2F4FF">d</text>
+              <rect x="9" y="26" width="14" height="3.2" rx="1.6" fill="#4361EE"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─────── V2 · DD LENS MARK ─────── -->
+    <div class="card">
+      <div class="head">
+        <span class="num">V2</span>
+        <span class="tag">monogram · D + D lens</span>
+      </div>
+      <h2 class="title">Dorado lens mark</h2>
+      <p class="desc">Dorado starts and ends with D. The mark is two D's facing each other — together they form a lens / eye / vesica shape. Reads as: agent seeing agent, signal in & out, a closed loop between two sides. Works as solo mark at any size.</p>
+
+      <div class="stage">
+        <span class="v2-big">
+          <svg width="110" height="110" viewBox="0 0 48 48">
+            <path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/>
+            <path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.85"/>
+          </svg>
+          <span class="txt"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span>
+        </span>
+      </div>
+
+      <div class="panel">
+        <div class="pbox">
+          <span class="v2-mid">
+            <svg width="26" height="26" viewBox="0 0 48 48">
+              <path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/>
+              <path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.85"/>
+            </svg>
+            <span class="txt"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span>
+          </span>
+        </div>
+        <div class="pbox light">
+          <span class="v2-mid">
+            <svg width="26" height="26" viewBox="0 0 48 48">
+              <path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#1A1D2E"/>
+              <path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#4361EE" opacity="0.9"/>
+            </svg>
+            <span class="txt"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span>
+          </span>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top: 18px">
+        <span class="row-label">Solo mark</span>
+        <div class="solo">
+          <div class="chip">
+            <svg width="28" height="28" viewBox="0 0 48 48">
+              <path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/>
+              <path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.85"/>
+            </svg>
+          </div>
+          <div class="chip sm">
+            <svg width="20" height="20" viewBox="0 0 48 48">
+              <path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/>
+              <path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.85"/>
+            </svg>
+          </div>
+          <div class="chip xs">
+            <svg width="14" height="14" viewBox="0 0 48 48">
+              <path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/>
+              <path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.85"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─────── V3 · CHEVRON PROMPT ─────── -->
+    <div class="card">
+      <div class="head">
+        <span class="num">V3</span>
+        <span class="tag">terminal · agent prompt</span>
+      </div>
+      <h2 class="title">› Dorado</h2>
+      <p class="desc">Command-line chevron + wordmark. Instantly reads as "developer tool / agent / CLI." The › prompt is a quiet but loaded symbol: ask → respond, user → agent, input → output. Solo mark is just the chevron in a rounded square — minimal, recognizable, scales to 14px.</p>
+
+      <div class="stage">
+        <span class="v3-big">
+          <span class="chev">›</span>
+          <span class="txt"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span>
+        </span>
+      </div>
+
+      <div class="panel">
+        <div class="pbox">
+          <span class="v3-mid">
+            <span class="chev">›</span>
+            <span class="txt"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span>
+          </span>
+        </div>
+        <div class="pbox light">
+          <span class="v3-mid">
+            <span class="chev" style="color:#4361EE">›</span>
+            <span class="txt"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span>
+          </span>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top: 18px">
+        <span class="row-label">Solo mark</span>
+        <div class="solo">
+          <div class="chip">
+            <svg width="28" height="28" viewBox="0 0 32 32">
+              <path d="M 11 8 L 21 16 L 11 24" stroke="#4361EE" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </div>
+          <div class="chip sm">
+            <svg width="20" height="20" viewBox="0 0 32 32">
+              <path d="M 11 8 L 21 16 L 11 24" stroke="#4361EE" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </div>
+          <div class="chip xs">
+            <svg width="14" height="14" viewBox="0 0 32 32">
+              <path d="M 11 8 L 21 16 L 11 24" stroke="#4361EE" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

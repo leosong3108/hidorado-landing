@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dorado · DD lens with eyes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --canvas: #05070F;
+    --ink: #F2F4FF;
+    --ink-soft: #A9B0C8;
+    --ink-ghost: #6C7596;
+    --accent: #4361EE;
+    --accent-hi: #748FFC;
+    --surface: #0B0E1C;
+    --hairline: rgba(232,235,255,0.1);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--canvas); color: var(--ink);
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    padding: 56px 48px 96px;
+    min-height: 100vh;
+  }
+  h1 {
+    font-size: 13px; letter-spacing: 0.2em; color: var(--accent-hi);
+    margin: 0 0 10px; text-transform: uppercase;
+    font-weight: 700;
+  }
+  .sub {
+    font-size: 12px; color: var(--ink-soft); margin: 0 0 48px;
+    font-family: "Inter", system-ui, sans-serif;
+    max-width: 720px; line-height: 1.6;
+  }
+  .variants {
+    display: grid; gap: 28px;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: 1000px) { .variants { grid-template-columns: 1fr; } }
+  .card {
+    border: 1px solid var(--hairline);
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 32px 32px;
+  }
+  .head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; }
+  .num { font-size: 11px; color: var(--accent); letter-spacing: 0.2em; }
+  .tag { font-size: 10px; color: var(--ink-ghost); letter-spacing: 0.15em; font-family: "Inter", sans-serif; text-transform: uppercase; }
+  .title {
+    font-size: 17px; color: var(--ink); letter-spacing: -0.01em;
+    margin: 0 0 8px; font-weight: 700;
+    font-family: "Inter", system-ui, sans-serif;
+  }
+  .desc {
+    font-size: 11.5px; color: var(--ink-soft); letter-spacing: 0.01em;
+    line-height: 1.6; margin: 0 0 22px;
+    font-family: "Inter", system-ui, sans-serif;
+  }
+  .stage {
+    background: radial-gradient(circle at 50% 50%, rgba(67,97,238,0.10), transparent 70%);
+    border: 1px solid rgba(116,143,252,0.08);
+    border-radius: 12px;
+    padding: 36px 20px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+    min-height: 170px;
+  }
+  .stage svg { filter: drop-shadow(0 0 16px rgba(67,97,238,0.45)); }
+
+  .lockup {
+    display: flex; flex-direction: column; gap: 10px;
+    margin-bottom: 16px;
+  }
+  .lockup .row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px;
+    border: 1px solid var(--hairline);
+    border-radius: 10px;
+    background: rgba(255,255,255,0.015);
+  }
+  .lockup .row.light { background: #FDFCFA; border-color: transparent; }
+  .lockup .row svg { filter: drop-shadow(0 0 5px rgba(67,97,238,0.45)); flex-shrink: 0; }
+  .lockup .row.light svg { filter: none; }
+  .lockup .wm { font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 19px; letter-spacing: 0.01em; }
+  .lockup .wm .bk { color: var(--ink); }
+  .lockup .wm .md { color: var(--accent-hi); }
+  .lockup .row.light .wm .bk { color: #1A1D2E; }
+  .lockup .row.light .wm .md { color: #4361EE; }
+
+  .solo {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .solo-label { font-size: 9.5px; color: var(--ink-ghost); letter-spacing: 0.2em; font-family: "Inter", sans-serif; text-transform: uppercase; min-width: 70px; }
+  .chip {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: linear-gradient(180deg, #0F1324, #050710);
+    border: 1px solid rgba(116,143,252,0.18);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .chip.sm { width: 28px; height: 28px; border-radius: 7px; }
+  .chip.xs { width: 20px; height: 20px; border-radius: 5px; }
+</style>
+</head>
+<body>
+  <h1>Dorado · DD lens + eyes</h1>
+  <p class="sub">Two D's → two fish facing each other → agent-to-agent. Testing eye placement, color balance, and proportions. Original eyeless version included for reference.</p>
+
+  <div class="variants">
+
+    <!-- ─── V2.0 · reference (no eyes) ─── -->
+    <div class="card">
+      <div class="head"><span class="num">V2.0</span><span class="tag">reference · no eyes</span></div>
+      <h2 class="title">Original — for comparison</h2>
+      <p class="desc">The mark you liked. No eyes. Shown at top so you can compare.</p>
+
+      <div class="stage">
+        <svg width="130" height="130" viewBox="0 0 48 48">
+          <path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/>
+          <path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.85"/>
+        </svg>
+      </div>
+
+      <div class="lockup">
+        <div class="row">
+          <svg width="26" height="26" viewBox="0 0 48 48">
+            <path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/>
+            <path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.85"/>
+          </svg>
+          <span class="wm"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span>
+        </div>
+      </div>
+
+      <div class="solo">
+        <span class="solo-label">favicon</span>
+        <div class="chip"><svg width="26" height="26" viewBox="0 0 48 48"><path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/><path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.85"/></svg></div>
+        <div class="chip sm"><svg width="18" height="18" viewBox="0 0 48 48"><path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/><path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.85"/></svg></div>
+        <div class="chip xs"><svg width="13" height="13" viewBox="0 0 48 48"><path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/><path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.85"/></svg></div>
+      </div>
+    </div>
+
+    <!-- ─── V2.1 · eyes facing OUTWARD ─── -->
+    <div class="card">
+      <div class="head"><span class="num">V2.1</span><span class="tag">eyes · outward</span></div>
+      <h2 class="title">Outward gaze</h2>
+      <p class="desc">Each D gets an eye near its outer curve, looking away from center. Reads as two fish "back to back," scanning outward. Tech-y, alert.</p>
+
+      <div class="stage">
+        <svg width="130" height="130" viewBox="0 0 48 48">
+          <path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/>
+          <path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.85"/>
+          <circle cx="18" cy="19" r="1.6" fill="#05070F"/>
+          <circle cx="30" cy="19" r="1.6" fill="#05070F"/>
+        </svg>
+      </div>
+
+      <div class="lockup">
+        <div class="row">
+          <svg width="26" height="26" viewBox="0 0 48 48">
+            <path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/>
+            <path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.85"/>
+            <circle cx="18" cy="19" r="1.8" fill="#05070F"/>
+            <circle cx="30" cy="19" r="1.8" fill="#05070F"/>
+          </svg>
+          <span class="wm"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span>
+        </div>
+        <div class="row light">
+          <svg width="26" height="26" viewBox="0 0 48 48">
+            <path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#1A1D2E"/>
+            <path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#4361EE" opacity="0.9"/>
+            <circle cx="18" cy="19" r="1.8" fill="#FDFCFA"/>
+            <circle cx="30" cy="19" r="1.8" fill="#FDFCFA"/>
+          </svg>
+          <span class="wm"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span>
+        </div>
+      </div>
+
+      <div class="solo">
+        <span class="solo-label">favicon</span>
+        <div class="chip"><svg width="26" height="26" viewBox="0 0 48 48"><path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/><path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.85"/><circle cx="18" cy="19" r="2.2" fill="#05070F"/><circle cx="30" cy="19" r="2.2" fill="#05070F"/></svg></div>
+        <div class="chip sm"><svg width="18" height="18" viewBox="0 0 48 48"><path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/><path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.85"/><circle cx="18" cy="19" r="2.6" fill="#05070F"/><circle cx="30" cy="19" r="2.6" fill="#05070F"/></svg></div>
+        <div class="chip xs"><svg width="13" height="13" viewBox="0 0 48 48"><path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/><path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.85"/></svg></div>
+      </div>
+    </div>
+
+    <!-- ─── V2.2 · eyes facing INWARD ─── -->
+    <div class="card">
+      <div class="head"><span class="num">V2.2</span><span class="tag">eyes · inward</span></div>
+      <h2 class="title">Inward gaze — dialogue</h2>
+      <p class="desc">Eyes sit near the inner stem of each D, close to the lens center. The two fish look at each other. Reads as: dialogue, handshake, agent-to-agent review. Most on-brand for A2A.</p>
+
+      <div class="stage">
+        <svg width="130" height="130" viewBox="0 0 48 48">
+          <path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/>
+          <path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.85"/>
+          <circle cx="22" cy="16" r="1.6" fill="#05070F"/>
+          <circle cx="26" cy="16" r="1.6" fill="#05070F"/>
+        </svg>
+      </div>
+
+      <div class="lockup">
+        <div class="row">
+          <svg width="26" height="26" viewBox="0 0 48 48">
+            <path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/>
+            <path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.85"/>
+            <circle cx="22" cy="16" r="1.8" fill="#05070F"/>
+            <circle cx="26" cy="16" r="1.8" fill="#05070F"/>
+          </svg>
+          <span class="wm"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span>
+        </div>
+        <div class="row light">
+          <svg width="26" height="26" viewBox="0 0 48 48">
+            <path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#1A1D2E"/>
+            <path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#4361EE" opacity="0.9"/>
+            <circle cx="22" cy="16" r="1.8" fill="#FDFCFA"/>
+            <circle cx="26" cy="16" r="1.8" fill="#FDFCFA"/>
+          </svg>
+          <span class="wm"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span>
+        </div>
+      </div>
+
+      <div class="solo">
+        <span class="solo-label">favicon</span>
+        <div class="chip"><svg width="26" height="26" viewBox="0 0 48 48"><path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/><path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.85"/><circle cx="22" cy="16" r="2.2" fill="#05070F"/><circle cx="26" cy="16" r="2.2" fill="#05070F"/></svg></div>
+        <div class="chip sm"><svg width="18" height="18" viewBox="0 0 48 48"><path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/><path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.85"/><circle cx="22" cy="16" r="2.6" fill="#05070F"/><circle cx="26" cy="16" r="2.6" fill="#05070F"/></svg></div>
+        <div class="chip xs"><svg width="13" height="13" viewBox="0 0 48 48"><path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/><path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.85"/></svg></div>
+      </div>
+    </div>
+
+    <!-- ─── V2.3 · white pupil (anime fish) ─── -->
+    <div class="card">
+      <div class="head"><span class="num">V2.3</span><span class="tag">eyes · white pupil</span></div>
+      <h2 class="title">White pupils</h2>
+      <p class="desc">Eyes are white circles instead of negative-space cutouts. Cuter, more animated, pops on both dark and light backgrounds without needing the bg color to show through.</p>
+
+      <div class="stage">
+        <svg width="130" height="130" viewBox="0 0 48 48">
+          <path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/>
+          <path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.9"/>
+          <circle cx="18" cy="19" r="1.8" fill="#F2F4FF"/>
+          <circle cx="30" cy="19" r="1.8" fill="#F2F4FF"/>
+        </svg>
+      </div>
+
+      <div class="lockup">
+        <div class="row">
+          <svg width="26" height="26" viewBox="0 0 48 48">
+            <path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/>
+            <path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.9"/>
+            <circle cx="18" cy="19" r="2" fill="#F2F4FF"/>
+            <circle cx="30" cy="19" r="2" fill="#F2F4FF"/>
+          </svg>
+          <span class="wm"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span>
+        </div>
+        <div class="row light">
+          <svg width="26" height="26" viewBox="0 0 48 48">
+            <path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#1A1D2E"/>
+            <path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#4361EE" opacity="0.9"/>
+            <circle cx="18" cy="19" r="2" fill="#FDFCFA"/>
+            <circle cx="30" cy="19" r="2" fill="#FDFCFA"/>
+          </svg>
+          <span class="wm"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span>
+        </div>
+      </div>
+
+      <div class="solo">
+        <span class="solo-label">favicon</span>
+        <div class="chip"><svg width="26" height="26" viewBox="0 0 48 48"><path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/><path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.9"/><circle cx="18" cy="19" r="2.5" fill="#F2F4FF"/><circle cx="30" cy="19" r="2.5" fill="#F2F4FF"/></svg></div>
+        <div class="chip sm"><svg width="18" height="18" viewBox="0 0 48 48"><path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/><path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.9"/><circle cx="18" cy="19" r="3" fill="#F2F4FF"/><circle cx="30" cy="19" r="3" fill="#F2F4FF"/></svg></div>
+        <div class="chip xs"><svg width="13" height="13" viewBox="0 0 48 48"><path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/><path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.9"/><circle cx="18" cy="19" r="4" fill="#F2F4FF"/><circle cx="30" cy="19" r="4" fill="#F2F4FF"/></svg></div>
+      </div>
+    </div>
+
+    <!-- ─── V2.4 · small pupil with ring ─── -->
+    <div class="card">
+      <div class="head"><span class="num">V2.4</span><span class="tag">eyes · ringed pupil</span></div>
+      <h2 class="title">Ringed pupils — technical</h2>
+      <p class="desc">White ring with dark dot inside. More camera-lens / scanner / technical instrument than "cartoon fish eye." Reads as two sensors/agents acquiring each other.</p>
+
+      <div class="stage">
+        <svg width="130" height="130" viewBox="0 0 48 48">
+          <path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/>
+          <path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.9"/>
+          <circle cx="18" cy="19" r="2.2" fill="#F2F4FF"/>
+          <circle cx="18" cy="19" r="0.95" fill="#05070F"/>
+          <circle cx="30" cy="19" r="2.2" fill="#F2F4FF"/>
+          <circle cx="30" cy="19" r="0.95" fill="#05070F"/>
+        </svg>
+      </div>
+
+      <div class="lockup">
+        <div class="row">
+          <svg width="26" height="26" viewBox="0 0 48 48">
+            <path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/>
+            <path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.9"/>
+            <circle cx="18" cy="19" r="2.4" fill="#F2F4FF"/>
+            <circle cx="18" cy="19" r="1.1" fill="#05070F"/>
+            <circle cx="30" cy="19" r="2.4" fill="#F2F4FF"/>
+            <circle cx="30" cy="19" r="1.1" fill="#05070F"/>
+          </svg>
+          <span class="wm"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span>
+        </div>
+        <div class="row light">
+          <svg width="26" height="26" viewBox="0 0 48 48">
+            <path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#1A1D2E"/>
+            <path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#4361EE" opacity="0.9"/>
+            <circle cx="18" cy="19" r="2.4" fill="#FDFCFA"/>
+            <circle cx="18" cy="19" r="1.1" fill="#1A1D2E"/>
+            <circle cx="30" cy="19" r="2.4" fill="#FDFCFA"/>
+            <circle cx="30" cy="19" r="1.1" fill="#1A1D2E"/>
+          </svg>
+          <span class="wm"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span>
+        </div>
+      </div>
+
+      <div class="solo">
+        <span class="solo-label">favicon</span>
+        <div class="chip"><svg width="26" height="26" viewBox="0 0 48 48"><path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/><path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.9"/><circle cx="18" cy="19" r="3" fill="#F2F4FF"/><circle cx="18" cy="19" r="1.3" fill="#05070F"/><circle cx="30" cy="19" r="3" fill="#F2F4FF"/><circle cx="30" cy="19" r="1.3" fill="#05070F"/></svg></div>
+        <div class="chip sm"><svg width="18" height="18" viewBox="0 0 48 48"><path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/><path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.9"/><circle cx="18" cy="19" r="3.5" fill="#F2F4FF"/><circle cx="30" cy="19" r="3.5" fill="#F2F4FF"/></svg></div>
+        <div class="chip xs"><svg width="13" height="13" viewBox="0 0 48 48"><path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/><path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.9"/><circle cx="18" cy="19" r="4.5" fill="#F2F4FF"/><circle cx="30" cy="19" r="4.5" fill="#F2F4FF"/></svg></div>
+      </div>
+    </div>
+
+    <!-- ─── V2.5 · big friendly eyes (lucide-style) ─── -->
+    <div class="card">
+      <div class="head"><span class="num">V2.5</span><span class="tag">eyes · big + friendly</span></div>
+      <h2 class="title">Big eyes — character</h2>
+      <p class="desc">Oversized eyes like the lucide Fish icon or cute mascot. Gives the mark personality and memorability. Less corporate, more "product with a soul." Best for merch and sticker appeal.</p>
+
+      <div class="stage">
+        <svg width="130" height="130" viewBox="0 0 48 48">
+          <path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/>
+          <path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.9"/>
+          <circle cx="18" cy="19" r="3" fill="#F2F4FF"/>
+          <circle cx="18.6" cy="19.2" r="1.2" fill="#05070F"/>
+          <circle cx="30" cy="19" r="3" fill="#F2F4FF"/>
+          <circle cx="29.4" cy="19.2" r="1.2" fill="#05070F"/>
+        </svg>
+      </div>
+
+      <div class="lockup">
+        <div class="row">
+          <svg width="26" height="26" viewBox="0 0 48 48">
+            <path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/>
+            <path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.9"/>
+            <circle cx="18" cy="19" r="3.2" fill="#F2F4FF"/>
+            <circle cx="18.6" cy="19.2" r="1.3" fill="#05070F"/>
+            <circle cx="30" cy="19" r="3.2" fill="#F2F4FF"/>
+            <circle cx="29.4" cy="19.2" r="1.3" fill="#05070F"/>
+          </svg>
+          <span class="wm"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span>
+        </div>
+        <div class="row light">
+          <svg width="26" height="26" viewBox="0 0 48 48">
+            <path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#1A1D2E"/>
+            <path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#4361EE" opacity="0.9"/>
+            <circle cx="18" cy="19" r="3.2" fill="#FDFCFA"/>
+            <circle cx="18.6" cy="19.2" r="1.3" fill="#1A1D2E"/>
+            <circle cx="30" cy="19" r="3.2" fill="#FDFCFA"/>
+            <circle cx="29.4" cy="19.2" r="1.3" fill="#1A1D2E"/>
+          </svg>
+          <span class="wm"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span>
+        </div>
+      </div>
+
+      <div class="solo">
+        <span class="solo-label">favicon</span>
+        <div class="chip"><svg width="26" height="26" viewBox="0 0 48 48"><path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/><path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.9"/><circle cx="18" cy="19" r="3.6" fill="#F2F4FF"/><circle cx="18.7" cy="19.3" r="1.5" fill="#05070F"/><circle cx="30" cy="19" r="3.6" fill="#F2F4FF"/><circle cx="29.3" cy="19.3" r="1.5" fill="#05070F"/></svg></div>
+        <div class="chip sm"><svg width="18" height="18" viewBox="0 0 48 48"><path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/><path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.9"/><circle cx="18" cy="19" r="4" fill="#F2F4FF"/><circle cx="30" cy="19" r="4" fill="#F2F4FF"/></svg></div>
+        <div class="chip xs"><svg width="13" height="13" viewBox="0 0 48 48"><path d="M 12 8 C 22 8, 26 14, 26 24 C 26 34, 22 40, 12 40 L 12 8 Z" fill="#4361EE"/><path d="M 36 8 C 26 8, 22 14, 22 24 C 22 34, 26 40, 36 40 L 36 8 Z" fill="#748FFC" opacity="0.9"/><circle cx="18" cy="19" r="5" fill="#F2F4FF"/><circle cx="30" cy="19" r="5" fill="#F2F4FF"/></svg></div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
