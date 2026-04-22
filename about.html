@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>About · Dorado</title>
+<meta name="description" content="Dorado is built by Ziyi Song. One person, end to end. Contact ziyisong@hidorado.com." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --canvas:       #05070F;
+    --canvas-2:     #0A0E1E;
+    --surface:      #10152A;
+    --ink:          #F2F4FF;
+    --ink-soft:     #B5BBD6;
+    --ink-dim:      #7E85A0;
+    --ink-faint:    #5A607A;
+    --ink-ghost:    #3D4360;
+    --accent:       #4361EE;
+    --accent-hi:    #748FFC;
+    --accent-deep:  #2E46C1;
+    --stream-hi:    #22D3EE;
+    --hairline:     rgba(232,235,255,0.06);
+    --hairline-hi:  rgba(232,235,255,0.14);
+    --radius-sm:    6px;
+    --radius-md:    10px;
+    --radius-lg:    16px;
+    --radius-xl:    22px;
+    --maxw:         1120px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  html, body {
+    background: var(--canvas);
+    color: var(--ink);
+    font-family: "Inter", "Noto Sans SC", ui-sans-serif, system-ui, sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+  }
+  a { color: inherit; text-decoration: none; }
+  img { display: block; max-width: 100%; }
+  ::selection { background: var(--accent); color: #fff; }
+
+  [data-locale="en"] .zh, [data-locale="zh"] .en { display: none; }
+
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
+  @media (max-width: 640px) { .wrap { padding: 0 20px; } }
+
+  /* ── NAV (matches home) ── */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 40;
+    background: linear-gradient(to bottom, rgba(5,7,15,0.92), rgba(5,7,15,0.4));
+    backdrop-filter: saturate(140%) blur(14px);
+    -webkit-backdrop-filter: saturate(140%) blur(14px);
+    border-bottom: 1px solid transparent;
+    transition: border-color .2s, background .2s;
+  }
+  .nav.scrolled { border-bottom-color: var(--hairline); background: rgba(5,7,15,0.92); }
+  .nav-inner {
+    max-width: var(--maxw); margin: 0 auto;
+    padding: 16px 32px;
+    display: flex; align-items: center; gap: 28px;
+  }
+  @media (max-width: 640px) { .nav-inner { padding: 14px 20px; gap: 14px; } }
+  .brand {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-weight: 700; font-size: 17px;
+    letter-spacing: 0.02em; color: var(--ink);
+    display: inline-flex; align-items: center; gap: 10px;
+    line-height: 1;
+  }
+  .brand .mark {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 3px rgba(67,97,238,0.13);
+    animation: breathe 2.6s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(67,97,238,0.13); }
+    50% { box-shadow: 0 0 0 5px rgba(67,97,238,0.08); }
+  }
+  .brand .wordmark { display: inline-flex; gap: 0; letter-spacing: 0.02em; }
+  .brand .bk { color: var(--ink); }
+  .brand .md { color: var(--accent-hi); }
+  .brand:hover .md { color: #fff; transition: color .2s; }
+
+  .nav-links {
+    display: flex; gap: 26px; margin-left: 8px;
+    font-size: 14px; color: var(--ink-soft);
+  }
+  .nav-links a { transition: color .15s; }
+  .nav-links a:hover { color: var(--accent-hi); }
+  .nav-links a.active { color: var(--accent-hi); }
+  .nav-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .lang {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12px; color: var(--ink-dim);
+    letter-spacing: 0.04em; padding: 6px 8px;
+    border-radius: var(--radius-sm);
+    background: none; border: none; cursor: pointer;
+  }
+  .lang:hover { color: var(--ink); }
+  .lang .on { color: var(--ink); font-weight: 500; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 16px; font-size: 14px; font-weight: 500;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    transition: all .18s ease;
+    white-space: nowrap; letter-spacing: -0.005em;
+  }
+  .btn-solid { background: #fff; color: #0A0D1A; }
+  .btn-solid:hover { background: var(--accent-hi); color: #fff; }
+  .btn-primary {
+    background: var(--accent); color: #fff;
+    box-shadow: 0 0 0 1px rgba(67,97,238,0.4), 0 8px 24px -4px rgba(67,97,238,0.55);
+  }
+  .btn-primary:hover { background: var(--accent-hi); transform: translateY(-1px); box-shadow: 0 0 0 1px rgba(116,143,252,0.5), 0 12px 32px -4px rgba(67,97,238,0.7); }
+  .btn-ghost {
+    background: transparent; color: var(--ink);
+    border-color: var(--hairline-hi);
+  }
+  .btn-ghost:hover { border-color: var(--accent-hi); color: var(--accent-hi); background: rgba(232,235,255,0.03); }
+  .btn-lg { padding: 11px 20px; font-size: 14.5px; }
+  @media (max-width: 820px) { .nav-links { display: none; } }
+  @media (max-width: 480px) { .btn-mobile-hide { display: none; } }
+
+  /* ── PAGE ── */
+  main.page {
+    position: relative;
+    padding: 140px 0 120px;
+    overflow: hidden;
+    isolation: isolate;
+    min-height: 100vh;
+  }
+  main.page::before {
+    content: "";
+    position: absolute; inset: 0; z-index: -2;
+    background:
+      radial-gradient(ellipse 70% 50% at 80% 10%, rgba(67,97,238,0.16), transparent 70%),
+      radial-gradient(ellipse 60% 55% at 10% 95%, rgba(30,27,75,0.36), transparent 70%),
+      linear-gradient(180deg, #05070F 0%, #0A0E1E 100%);
+  }
+  /* subtle blueprint grid */
+  main.page::after {
+    content: "";
+    position: absolute; inset: 0; z-index: -1;
+    background-image:
+      linear-gradient(to right, rgba(116,143,252,0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(116,143,252,0.035) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 40%, black 10%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px; color: var(--accent-hi);
+    letter-spacing: 0.32em; text-transform: uppercase;
+    padding: 7px 16px 7px 12px;
+    background: rgba(67,97,238,0.08);
+    border: 1px solid rgba(116,143,252,0.22);
+    border-radius: 999px;
+  }
+  .eyebrow .pulse {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent-hi);
+    box-shadow: 0 0 10px var(--accent-hi);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  h1.page-h {
+    margin-top: 26px;
+    font-family: "Inter", "Noto Sans SC", ui-sans-serif, system-ui, sans-serif;
+    font-weight: 700;
+    font-size: clamp(44px, 7.2vw, 96px);
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+    color: #fff;
+    max-width: 14ch;
+  }
+  h1.page-h em {
+    font-style: normal;
+    background: linear-gradient(180deg, var(--accent-hi) 0%, var(--accent) 55%, var(--stream-hi) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  p.lede {
+    margin-top: 28px;
+    max-width: 58ch;
+    font-size: 18px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+  p.lede b { color: #fff; font-weight: 600; }
+
+  /* ── PROFILE CARD ── */
+  .profile {
+    margin-top: 72px;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 56px;
+    align-items: start;
+  }
+  @media (max-width: 820px) {
+    .profile { grid-template-columns: 1fr; gap: 32px; margin-top: 48px; }
+  }
+
+  .portrait-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(116,143,252,0.22);
+    box-shadow:
+      0 0 0 1px rgba(116,143,252,0.08),
+      0 20px 60px -20px rgba(67,97,238,0.5),
+      inset 0 1px 0 rgba(232,235,255,0.08);
+    background: #0A0E1E;
+  }
+  .portrait-frame img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform .4s ease;
+  }
+  .portrait-frame::after {
+    content: ""; position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg, transparent 55%, rgba(5,7,15,0.55) 100%),
+      radial-gradient(circle at 20% 0%, rgba(116,143,252,0.2), transparent 50%);
+    pointer-events: none;
+    mix-blend-mode: soft-light;
+  }
+  .portrait-frame:hover img { transform: scale(1.02); }
+  .portrait-tag {
+    position: absolute;
+    left: 10px; bottom: 10px;
+    padding: 4px 8px;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 9.5px;
+    color: var(--accent-hi);
+    background: rgba(5,7,15,0.72);
+    border: 1px solid rgba(116,143,252,0.3);
+    border-radius: 4px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    backdrop-filter: blur(6px);
+  }
+  .portrait-corner {
+    position: absolute; width: 14px; height: 14px;
+    border: 1px solid rgba(116,143,252,0.45);
+    pointer-events: none;
+  }
+  .portrait-corner.tl { top: 8px; left: 8px; border-right: none; border-bottom: none; }
+  .portrait-corner.tr { top: 8px; right: 8px; border-left: none; border-bottom: none; }
+  .portrait-corner.bl { bottom: 8px; left: 8px; border-right: none; border-top: none; }
+  .portrait-corner.br { bottom: 8px; right: 8px; border-left: none; border-top: none; }
+
+  .bio {
+    padding-top: 6px;
+  }
+  .bio-name {
+    font-family: "Inter", "Noto Sans SC", ui-sans-serif, system-ui, sans-serif;
+    font-weight: 700;
+    font-size: clamp(28px, 3.2vw, 38px);
+    letter-spacing: -0.02em;
+    color: #fff;
+    display: flex; align-items: baseline; gap: 14px;
+    flex-wrap: wrap;
+  }
+  .bio-handle {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 13px;
+    color: var(--ink-dim);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .bio-role {
+    margin-top: 8px;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--accent-hi);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .bio-p {
+    margin-top: 22px;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    max-width: 60ch;
+  }
+  .bio-p + .bio-p { margin-top: 14px; }
+  .bio-p b { color: #fff; font-weight: 600; }
+
+  .bio-cta {
+    margin-top: 32px;
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+
+  /* ── FACTS GRID ── */
+  .facts {
+    margin-top: 96px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1px;
+    background: var(--hairline);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  @media (max-width: 820px) { .facts { margin-top: 64px; } }
+  .fact-c {
+    background: var(--surface);
+    padding: 28px 26px;
+    display: flex; flex-direction: column; gap: 10px;
+    position: relative;
+  }
+  .fact-k {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 10.5px; color: var(--ink-dim);
+    letter-spacing: 0.2em; text-transform: uppercase;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .fact-k::before {
+    content: ""; width: 18px; height: 1px; background: var(--accent-hi);
+  }
+  .fact-v {
+    font-size: 17px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: -0.01em;
+    line-height: 1.35;
+  }
+  .fact-v a { color: var(--accent-hi); border-bottom: 1px dashed rgba(116,143,252,0.45); transition: all .15s; }
+  .fact-v a:hover { color: #fff; border-bottom-color: #fff; }
+  .fact-d {
+    font-size: 13px;
+    color: var(--ink-dim);
+    line-height: 1.5;
+  }
+
+  /* ── RIGHTS / copyright callout ── */
+  .rights {
+    margin-top: 96px;
+    padding: 40px 44px;
+    background:
+      radial-gradient(ellipse 80% 100% at 0% 0%, rgba(67,97,238,0.12), transparent 70%),
+      var(--surface);
+    border: 1px solid var(--hairline-hi);
+    border-radius: var(--radius-lg);
+    position: relative;
+  }
+  @media (max-width: 640px) { .rights { padding: 28px 24px; margin-top: 64px; } }
+  .rights-k {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--accent-hi);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 18px;
+  }
+  .rights-k::before {
+    content: ""; width: 22px; height: 1px; background: var(--accent-hi);
+  }
+  .rights h3 {
+    font-family: "Inter", "Noto Sans SC", ui-sans-serif, system-ui, sans-serif;
+    font-weight: 600;
+    font-size: clamp(22px, 2.5vw, 30px);
+    color: #fff;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    margin-bottom: 14px;
+  }
+  .rights p {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+    max-width: 72ch;
+  }
+  .rights p + p { margin-top: 10px; }
+  .rights code {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12.5px;
+    background: rgba(116,143,252,0.1);
+    color: var(--accent-hi);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(116,143,252,0.2);
+  }
+
+  /* ── CONTACT CTA ── */
+  .contact {
+    margin-top: 80px;
+    text-align: center;
+    padding: 72px 0;
+    border-top: 1px solid var(--hairline);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .contact-k {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px; color: var(--ink-dim);
+    letter-spacing: 0.3em; text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .contact-mail {
+    display: inline-block;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-weight: 600;
+    font-size: clamp(22px, 3.6vw, 42px);
+    color: #fff;
+    letter-spacing: -0.015em;
+    padding-bottom: 6px;
+    border-bottom: 2px solid rgba(116,143,252,0.3);
+    transition: all .2s;
+  }
+  .contact-mail:hover {
+    color: var(--accent-hi);
+    border-bottom-color: var(--accent-hi);
+    text-shadow: 0 0 24px rgba(116,143,252,0.5);
+  }
+  .contact-sub {
+    margin-top: 18px;
+    font-size: 14px;
+    color: var(--ink-dim);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 32px 0;
+  }
+  .footer-inner {
+    max-width: var(--maxw); margin: 0 auto;
+    padding: 0 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px;
+    font-size: 13px; color: var(--ink-dim);
+  }
+  @media (max-width: 640px) { .footer-inner { padding: 0 20px; } }
+  .footer-inner .brand { font-size: 16px; }
+  .footer-links { display: flex; gap: 22px; flex-wrap: wrap; }
+  .footer-links a:hover { color: var(--accent-hi); }
+
+  /* reveal */
+  .reveal { opacity: 0; transform: translateY(12px); transition: opacity .7s ease, transform .7s cubic-bezier(0.2,0.8,0.2,1); }
+  .reveal.on { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0s !important; transition-duration: 0s !important; }
+    .reveal { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body data-locale="en">
+
+<!-- ── NAV ── -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="/" class="brand"><span class="mark"></span><span class="wordmark"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span></a>
+    <div class="nav-links">
+      <a href="/#product"><span class="en">Product</span><span class="zh">产品</span></a>
+      <a href="/#how"><span class="en">How it works</span><span class="zh">原理</span></a>
+      <a href="/#why"><span class="en">Why Dorado</span><span class="zh">为什么</span></a>
+      <a href="/about" class="active"><span class="en">About</span><span class="zh">关于</span></a>
+      <a href="https://github.com/leosong3108/dorado" target="_blank">GitHub</a>
+    </div>
+    <div class="nav-right">
+      <button class="lang" id="langBtn" aria-label="toggle language">
+        <span id="zhLabel">中</span> <span style="opacity:.35">/</span> <span class="on" id="enLabel">EN</span>
+      </button>
+      <a href="mailto:ziyisong@hidorado.com" class="btn btn-solid btn-mobile-hide">
+        <span class="en">Contact</span><span class="zh">联系</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── ABOUT PAGE ── -->
+<main class="page">
+  <div class="wrap">
+
+    <span class="eyebrow reveal">
+      <span class="pulse"></span>
+      <span class="en">About · one person, end to end</span>
+      <span class="zh">关于 · 一个人，从头到尾</span>
+    </span>
+
+    <h1 class="page-h reveal">
+      <span class="en">Built <em>alone</em>.<br>On purpose.</span>
+      <span class="zh">一个人 <em>独立做完</em>。<br>故意这样。</span>
+    </h1>
+
+    <p class="lede reveal">
+      <span class="en">Dorado — product, protocol, code, design, copy, and this website — is built <b>end to end by Ziyi Song</b>. No team, no agency, no ghost-writers. One person's bet on the Agent-to-Agent future.</span>
+      <span class="zh">Dorado——产品、协议、代码、设计、文案、这个网站——<b>全部由宋子艺一人完成</b>。没有团队、没有外包、没有代笔。一个人押注 Agent-to-Agent 的未来。</span>
+    </p>
+
+    <!-- ── PROFILE ── -->
+    <div class="profile reveal">
+      <div class="portrait-frame">
+        <span class="portrait-corner tl"></span>
+        <span class="portrait-corner tr"></span>
+        <span class="portrait-corner bl"></span>
+        <span class="portrait-corner br"></span>
+        <img src="/ziyi.jpg" alt="Ziyi Song" loading="eager" />
+        <span class="portrait-tag">Founder · Author · 2026</span>
+      </div>
+
+      <div class="bio">
+        <div class="bio-name">
+          <span class="en">Ziyi Song</span>
+          <span class="zh">宋子艺</span>
+          <span class="bio-handle">leosong3108</span>
+        </div>
+        <div class="bio-role">
+          <span class="en">Founder · Designer · Sole author</span>
+          <span class="zh">创始人 · 设计者 · 全部作者</span>
+        </div>
+
+        <p class="bio-p">
+          <span class="en">Dorado is a <b>solo project</b>. I wrote the memory pipeline, the extension, the Bridge protocol, the delegation engine, the chat UI, this landing, and every word you read here. I did it because the A2A future isn't waiting for committees — and because I wanted to see if one person could ship the scaffolding for it before the big labs caught up.</span>
+          <span class="zh">Dorado 是一个<b>单枪匹马</b>的项目。记忆管道、扩展、Bridge 协议、delegation 引擎、聊天 UI、这个网站、你现在读的每一个字——都是我一个人写的。我做这件事，是因为 A2A 的未来不会等委员会开完会，也因为我想看看一个人能不能在大厂反应过来之前，把它的脚手架搭起来。</span>
+        </p>
+
+        <p class="bio-p">
+          <span class="en">If you want to talk — product, protocol, collaboration, anything — write to me directly. I read every message.</span>
+          <span class="zh">想聊聊产品、协议、合作、任何事——直接写信给我。每一封我都看。</span>
+        </p>
+
+        <div class="bio-cta">
+          <a href="mailto:ziyisong@hidorado.com" class="btn btn-primary btn-lg">
+            <span class="en">Email me →</span>
+            <span class="zh">发邮件 →</span>
+          </a>
+          <a href="https://github.com/leosong3108/dorado" target="_blank" class="btn btn-ghost btn-lg">
+            <span class="en">GitHub ↗</span>
+            <span class="zh">GitHub ↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FACTS ── -->
+    <div class="facts reveal">
+      <div class="fact-c">
+        <div class="fact-k"><span class="en">Contact</span><span class="zh">联系</span></div>
+        <div class="fact-v"><a href="mailto:ziyisong@hidorado.com">ziyisong@hidorado.com</a></div>
+        <div class="fact-d">
+          <span class="en">Direct. I read every one.</span>
+          <span class="zh">直达本人。每封都看。</span>
+        </div>
+      </div>
+      <div class="fact-c">
+        <div class="fact-k"><span class="en">Status</span><span class="zh">状态</span></div>
+        <div class="fact-v">
+          <span class="en">Solo founder · full stack · 2026</span>
+          <span class="zh">独立创始人 · 全栈 · 2026</span>
+        </div>
+        <div class="fact-d">
+          <span class="en">No team, no investors yet. Everything shipped is mine.</span>
+          <span class="zh">暂无团队、暂无投资。出货的每一行都是我的。</span>
+        </div>
+      </div>
+      <div class="fact-c">
+        <div class="fact-k"><span class="en">Open source</span><span class="zh">开源</span></div>
+        <div class="fact-v">
+          <span class="en">Dorado core · MIT</span>
+          <span class="zh">Dorado 内核 · MIT</span>
+        </div>
+        <div class="fact-d">
+          <span class="en">The product is MIT. This site and brand are not.</span>
+          <span class="zh">产品代码 MIT。网站和品牌不授权复用。</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RIGHTS / COPYRIGHT ── -->
+    <section class="rights reveal">
+      <div class="rights-k">
+        <span class="en">Rights &amp; copyright</span>
+        <span class="zh">版权与权利</span>
+      </div>
+      <h3>
+        <span class="en">All rights reserved to Ziyi Song.</span>
+        <span class="zh">所有权归宋子艺一人。</span>
+      </h3>
+      <p>
+        <span class="en">© 2026 Ziyi Song. Every asset on this site — the design, the copy, the illustrations, the animations, the brand wordmark <code>DoraDo</code>, the A2A visual language, the portrait above, the domain <code>hidorado.com</code> — is <b>owned solely by Ziyi Song</b>. Not licensed for reuse, republication, commercial or AI-training use without written permission.</span>
+        <span class="zh">© 2026 宋子艺。本站所有素材——设计、文案、插图、动效、品牌字标 <code>DoraDo</code>、A2A 视觉语言、上方肖像、域名 <code>hidorado.com</code>——<b>均为宋子艺个人所有</b>。未经书面许可，不授权用于复用、转载、商业用途或 AI 训练。</span>
+      </p>
+      <p>
+        <span class="en">The <b>Dorado product code</b> at <code>github.com/leosong3108/dorado</code> is released under the <b>MIT License</b>. Fork it, run it, extend it — that part is free, as designed. But the brand, the site, and everything you see here belong to one person.</span>
+        <span class="zh"><b>Dorado 产品代码</b>在 <code>github.com/leosong3108/dorado</code>，按 <b>MIT 协议</b>开源。fork、自托管、改造——那部分本来就是自由的。但品牌、这个网站、你现在看到的一切，属于一个人。</span>
+      </p>
+      <p>
+        <span class="en">For questions about licensing, press, or use in writing, email <a href="mailto:ziyisong@hidorado.com" style="color:var(--accent-hi); border-bottom:1px dashed rgba(116,143,252,0.4);">ziyisong@hidorado.com</a>.</span>
+        <span class="zh">授权、媒体、写作引用相关问题，发邮件到 <a href="mailto:ziyisong@hidorado.com" style="color:var(--accent-hi); border-bottom:1px dashed rgba(116,143,252,0.4);">ziyisong@hidorado.com</a>。</span>
+      </p>
+    </section>
+
+    <!-- ── CONTACT ── -->
+    <section class="contact reveal">
+      <div class="contact-k"><span class="en">Say hello</span><span class="zh">打个招呼</span></div>
+      <a href="mailto:ziyisong@hidorado.com" class="contact-mail">ziyisong@hidorado.com</a>
+      <div class="contact-sub">
+        <span class="en">— or just tell me what you're working on.</span>
+        <span class="zh">— 或者就告诉我你在做什么。</span>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <a href="/" class="brand"><span class="mark"></span><span class="wordmark"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span></a>
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="https://github.com/leosong3108/dorado" target="_blank">GitHub</a>
+      <a href="mailto:ziyisong@hidorado.com">ziyisong@hidorado.com</a>
+      <span>© 2026 Ziyi Song</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const langBtn = document.getElementById('langBtn');
+  const zhLabel = document.getElementById('zhLabel');
+  const enLabel = document.getElementById('enLabel');
+  langBtn.addEventListener('click', () => {
+    const next = document.body.dataset.locale === 'zh' ? 'en' : 'zh';
+    document.body.dataset.locale = next;
+    document.documentElement.lang = next;
+    zhLabel.classList.toggle('on', next === 'zh');
+    enLabel.classList.toggle('on', next === 'en');
+  });
+
+  const nav = document.getElementById('nav');
+  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 8);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (e.isIntersecting) {
+        e.target.classList.add('on');
+        io.unobserve(e.target);
+      }
+    }
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
