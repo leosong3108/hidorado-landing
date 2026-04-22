@@ -1156,6 +1156,65 @@
     letter-spacing: 0.12em; white-space: nowrap;
   }
 
+  /* ─────────── CYCLE DIAGRAM ─────────── */
+  .cycle-wrap { display: none; justify-content: center; margin-top: 64px; }
+  @media (min-width: 760px) {
+    .cycle-wrap { display: flex; }
+    .flow-wrap { display: none; }
+  }
+  .cycle-diagram {
+    width: 100%; max-width: 580px; aspect-ratio: 1;
+    position: relative;
+  }
+  .cycle-svg {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    overflow: visible;
+  }
+  .cnode {
+    position: absolute;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-lg);
+    padding: 14px 18px 16px;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 6px; text-align: center;
+    width: 170px; z-index: 3;
+  }
+  .cnode-agent {
+    border-color: rgba(67,97,238,0.5);
+    background: linear-gradient(160deg, rgba(67,97,238,0.1), var(--surface));
+    box-shadow: 0 0 36px -8px rgba(67,97,238,0.35), inset 0 0 0 1px rgba(116,143,252,0.12);
+  }
+  .cnode-ic {
+    width: 42px; height: 42px; border-radius: 10px;
+    border: 1px solid rgba(116,143,252,0.25);
+    background: linear-gradient(145deg, rgba(67,97,238,0.2), rgba(67,97,238,0.04));
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent-hi);
+    box-shadow: 0 0 18px -3px rgba(67,97,238,0.45), inset 0 1px 0 rgba(232,235,255,0.07);
+  }
+  .cnode-ic svg { width: 20px; height: 20px; }
+  .cnode-label {
+    font-family: "Inter", sans-serif; font-weight: 700;
+    font-size: 13.5px; color: var(--ink); letter-spacing: -0.01em; margin-top: 2px;
+  }
+  .cnode-agent .cnode-label { color: var(--accent-hi); }
+  .cnode-sub {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 9.5px; color: var(--ink-dim); letter-spacing: 0.08em;
+    line-height: 1.35;
+  }
+  .cnode-badge {
+    font-family: "JetBrains Mono", monospace; font-size: 8.5px;
+    color: var(--accent); letter-spacing: 0.14em;
+    border: 1px solid rgba(67,97,238,0.3); padding: 1px 6px;
+    border-radius: 3px; background: rgba(67,97,238,0.08); margin-top: 2px;
+  }
+  .cnode-top    { top: 0;    left: 50%; transform: translate(-50%, 0); }
+  .cnode-right  { top: 50%;  right: 0;  transform: translate(0, -50%); }
+  .cnode-bottom { bottom: 0; left: 50%; transform: translate(-50%, 0); }
+  .cnode-left   { top: 50%;  left: 0;   transform: translate(0, -50%); }
+
   /* ─────────── DARK PANEL ─────────── */
   .panel-dark {
     background: var(--navy);
@@ -1786,6 +1845,94 @@
       </h2>
     </div>
 
+    <!-- CYCLE (desktop) -->
+    <div class="cycle-wrap reveal">
+      <div class="cycle-diagram">
+        <svg class="cycle-svg" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="carr" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto">
+              <path d="M0 0 L10 5 L0 10 z" fill="rgba(116,143,252,0.7)"/>
+            </marker>
+            <path id="cPath" d="M 425 250 A 175 175 0 1 1 424.99 249.9 Z" fill="none"/>
+          </defs>
+
+          <!-- Guide ring -->
+          <circle cx="250" cy="250" r="175" fill="none" stroke="rgba(116,143,252,0.13)" stroke-width="1" stroke-dasharray="3 5"/>
+
+          <!-- 4 clockwise arc arrows -->
+          <path d="M 320 98 A 175 175 0 0 1 402 180" stroke="rgba(116,143,252,0.5)" stroke-width="1.6" fill="none" marker-end="url(#carr)"/>
+          <path d="M 402 320 A 175 175 0 0 1 320 402" stroke="rgba(116,143,252,0.5)" stroke-width="1.6" fill="none" marker-end="url(#carr)"/>
+          <path d="M 180 402 A 175 175 0 0 1 98 320" stroke="rgba(116,143,252,0.5)" stroke-width="1.6" fill="none" marker-end="url(#carr)"/>
+          <path d="M 98 180 A 175 175 0 0 1 180 98" stroke="rgba(116,143,252,0.5)" stroke-width="1.6" fill="none" marker-end="url(#carr)"/>
+
+          <!-- Arc labels -->
+          <text x="395" y="150" font-family="JetBrains Mono, monospace" font-size="10" fill="rgba(169,176,200,0.55)" letter-spacing="1.2" text-anchor="middle">conversation</text>
+          <text x="395" y="360" font-family="JetBrains Mono, monospace" font-size="10" fill="rgba(169,176,200,0.55)" letter-spacing="1.2" text-anchor="middle">delegates</text>
+          <text x="105" y="360" font-family="JetBrains Mono, monospace" font-size="10" fill="rgba(169,176,200,0.55)" letter-spacing="1.2" text-anchor="middle">results</text>
+          <text x="105" y="150" font-family="JetBrains Mono, monospace" font-size="10" fill="rgba(169,176,200,0.55)" letter-spacing="1.2" text-anchor="middle">reviewed</text>
+
+          <!-- Flowing packets around the cycle -->
+          <circle r="5" fill="#4361EE" filter="drop-shadow(0 0 6px rgba(67,97,238,0.9))">
+            <animateMotion dur="10s" repeatCount="indefinite"><mpath href="#cPath"/></animateMotion>
+          </circle>
+          <circle r="5" fill="#4361EE" opacity="0.85" filter="drop-shadow(0 0 6px rgba(67,97,238,0.8))">
+            <animateMotion dur="10s" begin="-2.5s" repeatCount="indefinite"><mpath href="#cPath"/></animateMotion>
+          </circle>
+          <circle r="5" fill="#4361EE" opacity="0.85" filter="drop-shadow(0 0 6px rgba(67,97,238,0.8))">
+            <animateMotion dur="10s" begin="-5s" repeatCount="indefinite"><mpath href="#cPath"/></animateMotion>
+          </circle>
+          <circle r="5" fill="#4361EE" opacity="0.85" filter="drop-shadow(0 0 6px rgba(67,97,238,0.8))">
+            <animateMotion dur="10s" begin="-7.5s" repeatCount="indefinite"><mpath href="#cPath"/></animateMotion>
+          </circle>
+        </svg>
+
+        <!-- YOU · top -->
+        <div class="cnode cnode-top">
+          <div class="cnode-ic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M4 20c0-3.5 3.6-6.5 8-6.5s8 3 8 6.5"/></svg>
+          </div>
+          <div class="cnode-label"><span class="en">You</span><span class="zh">你</span></div>
+          <div class="cnode-sub"><span class="en">give the goal</span><span class="zh">说明目标</span></div>
+        </div>
+
+        <!-- YOUR AGENT · right -->
+        <div class="cnode cnode-right cnode-agent">
+          <div class="cnode-ic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.9 2.6 2.6.9-2.6.9L19 22.5l-.9-2.6-2.6-.9 2.6-.9z"/></svg>
+          </div>
+          <div class="cnode-label"><span class="en">Your Agent</span><span class="zh">你的 Agent</span></div>
+          <div class="cnode-sub"><span class="en">full context · L1·L2·L3</span><span class="zh">完整上下文 · L1·L2·L3</span></div>
+          <div class="cnode-badge">DoraDo</div>
+        </div>
+
+        <!-- ANY AI · bottom -->
+        <div class="cnode cnode-bottom">
+          <div class="cnode-ic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="4.5" cy="12" r="2.2"/><circle cx="19.5" cy="12" r="2.2"/>
+              <circle cx="12" cy="4.5" r="2.2"/><circle cx="12" cy="19.5" r="2.2"/>
+              <path d="M6.5 11l3.8-4.8M13.8 17.9l3.7-4.7"/>
+              <path d="M6.5 13l3.8 4.8M13.8 6.1l3.7 4.7"/>
+              <circle cx="12" cy="12" r="2" fill="rgba(67,97,238,0.15)" stroke-width="1.3"/>
+            </svg>
+          </div>
+          <div class="cnode-label"><span class="en">Any AI</span><span class="zh">任意 AI</span></div>
+          <div class="cnode-sub"><span class="en">GPT · Gemini · Claude</span><span class="zh">GPT · Gemini · Claude</span></div>
+        </div>
+
+        <!-- AGENT REVIEWS · left -->
+        <div class="cnode cnode-left cnode-agent">
+          <div class="cnode-ic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <div class="cnode-label"><span class="en">Agent reviews</span><span class="zh">Agent 审查</span></div>
+          <div class="cnode-sub"><span class="en">filters · your voice</span><span class="zh">过滤 · 用你的语气</span></div>
+          <div class="cnode-badge">DoraDo</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLOW (mobile fallback) -->
     <div class="flow-wrap reveal">
       <div class="flow-col">
 
