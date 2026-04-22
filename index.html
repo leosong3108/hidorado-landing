@@ -2175,63 +2175,24 @@
     const seed = () => {
       const base = Math.min(W, H);
 
-      // background starfield — sparse, ambient
-      stars = Array.from({ length: 150 }, () => ({
+      // background starfield — just a few ambient stars
+      stars = Array.from({ length: 36 }, () => ({
         x: Math.random(), y: Math.random(),
-        r: Math.pow(Math.random(), 3) * 1.1 + 0.2,
-        a: 0.22 + Math.random() * 0.55,
+        r: Math.pow(Math.random(), 2.5) * 1.3 + 0.3,
+        a: 0.35 + Math.random() * 0.55,
         tw: Math.random() * 6.28, ts: 0.22 + Math.random() * 0.7,
       }));
 
-      // disk ring system — density bands + gaps (Saturn-like structure)
-      ring = [];
-      const bands = [
-        { r0: 0.18, r1: 0.23, den: 280, aMul: 0.7, tint: 0.1 },  // inner faint
-        { r0: 0.23, r1: 0.25, den: 40,  aMul: 0.3, tint: 0.0 },  // inner shadow
-        { r0: 0.25, r1: 0.34, den: 900, aMul: 1.0, tint: 0.3 },  // main bright (B-ring)
-        { r0: 0.34, r1: 0.36, den: 30,  aMul: 0.2, tint: 0.0 },  // Cassini gap
-        { r0: 0.36, r1: 0.44, den: 620, aMul: 0.85, tint: 0.5 }, // outer bright (A-ring)
-        { r0: 0.44, r1: 0.50, den: 160, aMul: 0.5, tint: 0.65 }, // outer fade
-      ];
-      const refR = base * 0.30; // reference radius for Keplerian speed
-      for (const b of bands) {
-        const rMin = base * b.r0, rMax = base * b.r1;
-        for (let j = 0; j < b.den; j++) {
-          const rr = rMin + Math.random() * (rMax - rMin);
-          // Size distribution: mostly tiny dust, some specks, rare bright
-          const roll = Math.random();
-          const sz = roll < 0.88 ? 0.35 + Math.random() * 0.3
-                   : roll < 0.975 ? 0.7 + Math.random() * 0.35
-                   : 1.1 + Math.random() * 0.6;
-          const bright = sz > 1.05;
-          ring.push({
-            th: Math.random() * 6.28,
-            r: rr,
-            sz: sz,
-            bright: bright,
-            a: (0.18 + Math.random() * 0.55) * b.aMul,
-            tw: Math.random() * 6.28,
-            ts: 0.25 + Math.random() * 0.65,
-            tint: b.tint,
-            // Keplerian differential rotation: inner faster, outer slower (∝ r^-1.5)
-            sp: Math.pow(refR / rr, 1.5),
-          });
-        }
-      }
+      // ring particles and haze bands removed — keep only the orbit lines below
 
-      // Soft haze bands (dust layer behind the particles)
-      // stored as simple band ranges to draw per-frame
-      ring.hazeBands = [
-        { r: 0.30, w: 0.13, a: 0.09, tint: 0.3 },
-        { r: 0.40, w: 0.09, a: 0.07, tint: 0.5 },
-      ];
-
-      // sweeping orbital paths with traveling bright particles
+      // concentric orbital paths — same tilt + rotation, different radii
+      // (clean planetary-ring feel instead of crossing ellipses)
       orbits.length = 0;
-      orbits.push({ rx: base * 0.50, ry: base * 0.14, rot:  0.18, sp: 0.065, ph: 0.0, sz: 2.6 });
-      orbits.push({ rx: base * 0.62, ry: base * 0.11, rot: -0.14, sp: 0.050, ph: 1.6, sz: 2.0 });
-      orbits.push({ rx: base * 0.66, ry: base * 0.28, rot:  0.55, sp: 0.038, ph: 3.0, sz: 3.2 });
-      orbits.push({ rx: base * 0.36, ry: base * 0.08, rot: -0.42, sp: 0.105, ph: 4.4, sz: 1.8 });
+      const commonRot = ROT;
+      const commonTilt = TILT;
+      orbits.push({ rx: base * 0.34, ry: base * 0.34 * commonTilt, rot: commonRot, sp: 0.080, ph: 0.0, sz: 2.0 });
+      orbits.push({ rx: base * 0.50, ry: base * 0.50 * commonTilt, rot: commonRot, sp: 0.055, ph: 2.1, sz: 2.6 });
+      orbits.push({ rx: base * 0.66, ry: base * 0.66 * commonTilt, rot: commonRot, sp: 0.038, ph: 4.2, sz: 3.0 });
     };
 
     const resize = () => {
@@ -2279,68 +2240,7 @@
         ctx.fill();
       }
 
-      // ─── ring system ───
-      const base2 = Math.min(W, H);
-      const baseSpin = reduce ? 0 : t * 0.022;
-
-      // haze bands — soft dust glow drawn with additive blending
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.translate(CX, CY);
-      ctx.rotate(ROT);
-      ctx.scale(1, TILT);
-      for (const hb of ring.hazeBands) {
-        const inner = base2 * (hb.r - hb.w * 0.5);
-        const outer = base2 * (hb.r + hb.w * 0.5);
-        const hg = ctx.createRadialGradient(0, 0, inner, 0, 0, outer);
-        const R = 120 + (hb.tint * 60 | 0);
-        const G = 150 + (hb.tint * 40 | 0);
-        hg.addColorStop(0, `rgba(${R},${G},255,0)`);
-        hg.addColorStop(0.5, `rgba(${R},${G},255,${hb.a})`);
-        hg.addColorStop(1, `rgba(${R},${G},255,0)`);
-        ctx.fillStyle = hg;
-        ctx.beginPath();
-        ctx.arc(0, 0, outer, 0, 6.28);
-        ctx.fill();
-      }
-      ctx.restore();
-
-      // ring particles — differential rotation, size variation, far-side dimming
-      for (const p of ring) {
-        const th = p.th + baseSpin * p.sp;
-        const x0 = Math.cos(th) * p.r;
-        const y0 = Math.sin(th) * p.r * TILT;
-        const px = CX + x0 * cosR - y0 * sinR + tx * 4;
-        const py = CY + x0 * sinR + y0 * cosR + ty * 6;
-
-        // Far-side dimming: particles behind the disk plane get dimmer
-        // (in our projection, y0 < 0 is the back half after tilt)
-        const farDim = y0 < 0 ? 0.45 : 1.0;
-
-        const tw = 0.6 + Math.sin(t * p.ts + p.tw) * 0.4;
-        const alpha = p.a * tw * farDim;
-
-        // Color: mostly cool blue-white, with warmer tint for higher-tint bands
-        const R = 200 + (p.tint * 50 | 0);
-        const G = 212 + (p.tint * 18 | 0);
-        const B = 255 - (p.tint * 10 | 0);
-
-        ctx.beginPath();
-        ctx.arc(px, py, p.sz, 0, 6.28);
-        ctx.fillStyle = `rgba(${R},${G},${B},${alpha})`;
-        ctx.fill();
-
-        // Halo on bright specks
-        if (p.bright && alpha > 0.12) {
-          const gg = ctx.createRadialGradient(px, py, 0, px, py, p.sz * 4);
-          gg.addColorStop(0, `rgba(${R},${G},${B},${alpha * 0.7})`);
-          gg.addColorStop(1, `rgba(${R},${G},${B},0)`);
-          ctx.fillStyle = gg;
-          ctx.beginPath();
-          ctx.arc(px, py, p.sz * 4, 0, 6.28);
-          ctx.fill();
-        }
-      }
+      // ring particles + haze removed — only orbit lines remain below
 
       // central core glow
       const cg = ctx.createRadialGradient(CX, CY, 0, CX, CY, Math.min(W, H) * 0.24);
@@ -2358,8 +2258,8 @@
         ctx.rotate(o.rot);
         ctx.beginPath();
         ctx.ellipse(0, 0, o.rx, o.ry, 0, 0, 6.28);
-        ctx.strokeStyle = 'rgba(148,173,255,0.11)';
-        ctx.lineWidth = 0.6;
+        ctx.strokeStyle = 'rgba(148,173,255,0.20)';
+        ctx.lineWidth = 0.7;
         ctx.stroke();
         ctx.restore();
 
