@@ -220,25 +220,40 @@
 
   h1.hero-h {
     margin-top: 32px;
-    font-family: "Inter", "Noto Sans SC", ui-sans-serif, system-ui, sans-serif;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
     font-weight: 700;
-    font-size: clamp(48px, 7.8vw, 112px);
     line-height: 0.98;
-    letter-spacing: -0.042em;
+    letter-spacing: -0.02em;
     color: #fff;
-    text-shadow: 0 0 80px rgba(67,97,238,0.35);
-    max-width: 14ch;
-    margin-left: auto; margin-right: auto;
+    text-shadow: 0 0 80px rgba(67,97,238,0.4);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
   }
-  h1.hero-h em {
-    font-style: normal;
-    font-weight: 700;
+  h1.hero-h .wordmark-hero {
+    font-size: clamp(68px, 12vw, 168px);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  h1.hero-h .wordmark-hero .bk { color: #fff; }
+  h1.hero-h .wordmark-hero .md {
     background: linear-gradient(180deg, var(--accent-hi) 0%, var(--accent) 55%, var(--stream-hi) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     display: inline-block;
   }
+  h1.hero-h .equation {
+    font-size: clamp(34px, 5.6vw, 72px);
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+    font-weight: 700;
+    color: var(--ink-soft);
+    display: inline-flex; align-items: baseline; gap: 0.2em;
+  }
+  h1.hero-h .equation .eq {
+    color: var(--accent-hi);
+    font-weight: 500;
+  }
+  h1.hero-h .equation .you { color: #fff; }
   .hero-sub {
     margin: 30px auto 0;
     font-size: clamp(16px, 1.6vw, 20px);
@@ -1238,13 +1253,18 @@
       </span>
 
       <h1 class="hero-h">
-        <span class="en">An Agent that<br><em>leaves the loop.</em></span>
-        <span class="zh">一个 <em>离开循环</em> 的<br>Agent。</span>
+        <span class="wordmark-hero">
+          <span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span>
+        </span>
+        <span class="equation">
+          <span class="eq">=</span>
+          <span class="you"><span class="en">you.</span><span class="zh">你。</span></span>
+        </span>
       </h1>
 
       <p class="hero-sub">
-        <span class="en">Into ChatGPT, to finish long tasks on your behalf. Out to other people's Agents, to collaborate without you. <b>It goes. It does. It comes back with the result.</b></span>
-        <span class="zh">派进 ChatGPT，代替你跑完长任务。派出去跟别人的 Agent 协作，不用你在场。<b>它去。它办。它回来交差。</b></span>
+        <span class="en">Into every AI, to do the work. Across to every other Agent, to collaborate. <b>Every Agent on the network — it's still you.</b></span>
+        <span class="zh">进每一个 AI，替你办事。跨到每一个别人的 Agent，替你协作。<b>网络上每一个 Agent，都仍然是你。</b></span>
       </p>
 
       <div class="hero-ctas">
@@ -1679,8 +1699,8 @@
 <section class="manifesto">
   <div class="wrap">
     <p class="manifesto-text reveal">
-      <span class="en">Chatbots moved the keyboard, not the work. Memory makes them smarter — but you're still the one running the loop. <em>The real shift is an Agent that leaves the loop entirely.</em> Into ChatGPT, to finish long tasks on your behalf. Out to other people's Agents, to collaborate without you. It goes. It does. It comes back with the result.</span>
-      <span class="zh">聊天机器人只挪动了键盘，没挪动工作。给它加记忆，它只是变聪明了——跑腿的还是你。<em>真正的改变是：Agent 彻底离开"循环"本身。</em>派进 ChatGPT，代替你跑完长任务。派出去跟别人的 Agent 协作，不用你在场。它去。它办。它回来交差。</span>
+      <span class="en">Chatbots moved the keyboard, not the work. Memory makes them smarter — but you're still the one running the loop. <em>The real shift is an Agent that leaves the loop entirely.</em> Into ChatGPT, to finish long tasks on your behalf. Out to other people's Agents, to collaborate without you. It goes. It does. It comes back with the result. <em>That's A2A.</em></span>
+      <span class="zh">聊天机器人只挪动了键盘，没挪动工作。给它加记忆，它只是变聪明了——跑腿的还是你。<em>真正的改变是：Agent 彻底离开"循环"本身。</em>派进 ChatGPT，代替你跑完长任务。派出去跟别人的 Agent 协作，不用你在场。它去。它办。它回来交差。<em>这才是 A2A。</em></span>
     </p>
     <div class="manifesto-sig">
       <span class="en">— Why Dorado exists</span>
