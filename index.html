@@ -1015,21 +1015,26 @@
     gap: 16px; margin-bottom: 2px;
   }
   .feat-ic {
-    width: 56px; height: 56px;
-    border: 1px solid rgba(116,143,252,0.28);
-    border-radius: 12px;
+    width: 60px; height: 60px;
+    border: 1px solid rgba(116,143,252,0.3);
+    border-radius: 14px;
     display: flex; align-items: center; justify-content: center;
-    background: linear-gradient(145deg, rgba(67,97,238,0.12), rgba(67,97,238,0.02));
+    background: linear-gradient(145deg, rgba(67,97,238,0.16), rgba(67,97,238,0.02));
     color: var(--accent-hi);
-    box-shadow: inset 0 1px 0 rgba(232,235,255,0.06), 0 0 24px -6px rgba(67,97,238,0.35);
+    box-shadow: inset 0 1px 0 rgba(232,235,255,0.09), 0 0 36px -4px rgba(67,97,238,0.48), 0 2px 16px rgba(0,0,0,0.2);
     flex-shrink: 0;
     position: relative;
   }
   .feat-ic svg { width: 28px; height: 28px; }
+  .feat-ic::before {
+    content: ""; position: absolute; inset: 0; border-radius: 13px;
+    background: radial-gradient(circle at 35% 30%, rgba(116,143,252,0.16), transparent 65%);
+    pointer-events: none;
+  }
   .feat-ic::after {
     content: ""; position: absolute; inset: -1px;
-    border-radius: 12px; border: 1px solid transparent;
-    background: linear-gradient(135deg, rgba(116,143,252,0.4), transparent 60%) border-box;
+    border-radius: 14px; border: 1px solid transparent;
+    background: linear-gradient(135deg, rgba(116,143,252,0.5), transparent 52%) border-box;
     -webkit-mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor; mask-composite: exclude;
     pointer-events: none;
@@ -1080,12 +1085,13 @@
     box-shadow: 0 0 36px -10px rgba(67,97,238,0.3), inset 0 0 0 1px rgba(116,143,252,0.1);
   }
   .fnode-ic {
-    flex-shrink: 0; width: 38px; height: 38px; border-radius: 9px;
-    border: 1px solid rgba(116,143,252,0.22);
-    background: linear-gradient(145deg, rgba(67,97,238,0.18), rgba(67,97,238,0.04));
+    flex-shrink: 0; width: 42px; height: 42px; border-radius: 10px;
+    border: 1px solid rgba(116,143,252,0.25);
+    background: linear-gradient(145deg, rgba(67,97,238,0.2), rgba(67,97,238,0.04));
     display: flex; align-items: center; justify-content: center; color: var(--accent-hi);
+    box-shadow: 0 0 18px -3px rgba(67,97,238,0.45), inset 0 1px 0 rgba(232,235,255,0.07);
   }
-  .fnode-ic svg { width: 18px; height: 18px; }
+  .fnode-ic svg { width: 20px; height: 20px; }
   .fnode-info { flex: 1; min-width: 0; }
   .fnode-label {
     font-family: "Inter", sans-serif; font-weight: 700;
@@ -1128,6 +1134,26 @@
     8%   { opacity: 1; }
     92%  { opacity: 1; }
     100% { top: calc(100% + 4px); opacity: 0; }
+  }
+  @keyframes pktUp {
+    0%   { top: calc(100% + 4px); opacity: 0; }
+    8%   { opacity: 1; }
+    92%  { opacity: 1; }
+    100% { top: -4px; opacity: 0; }
+  }
+  .fpkt.up { animation-name: pktUp; }
+  .fcycle {
+    width: 100%; display: flex; align-items: center; gap: 12px; padding: 0 0 8px;
+  }
+  .fcycle-line {
+    flex: 1; height: 1px;
+    background: linear-gradient(to right, transparent, rgba(67,97,238,0.35));
+  }
+  .fcycle-line.r { background: linear-gradient(to left, transparent, rgba(67,97,238,0.35)); }
+  .fcycle-label {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 9.5px; color: rgba(116,143,252,0.5);
+    letter-spacing: 0.12em; white-space: nowrap;
   }
 
   /* ─────────── DARK PANEL ─────────── */
@@ -1638,12 +1664,12 @@
             </h3>
           </div>
           <div class="feat-ic" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="12.5" y="5.5" width="7.5" height="13" rx="1.5"/>
-              <circle cx="16.25" cy="9" r="0.9" fill="currentColor" stroke="none"/>
-              <path d="M14.5 12.5h3.5M14.5 14.5h2.5M14.5 16.5h3"/>
-              <path d="M3 12h7.5"/>
-              <path d="M8 9l3 3-3 3"/>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 5h5.5a1 1 0 011 1v8a1 1 0 01-1 1h-2l-2 2.5-2-2.5V6a1 1 0 011-1z"/>
+              <path d="M16 9h2.5M16 11.5h2" opacity="0.7"/>
+              <path d="M2.5 12h9.5"/>
+              <path d="M9 8.5l3.5 3.5-3.5 3.5"/>
+              <circle cx="2.5" cy="12" r="1.3" fill="currentColor" stroke="none" opacity="0.55"/>
             </svg>
           </div>
         </div>
@@ -1664,12 +1690,13 @@
             </h3>
           </div>
           <div class="feat-ic" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="4.5" cy="12" r="2.2"/>
-              <circle cx="19.5" cy="12" r="2.2"/>
-              <path d="M6.7 12h3.3M14 12h3.3"/>
-              <path d="M12 10.2l1.6 1.8-1.6 1.8-1.6-1.8z" fill="currentColor" stroke="none"/>
-              <path d="M4.5 7v-1.5M19.5 7v-1.5M4.5 17v1.5M19.5 17v1.5" opacity="0.6"/>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="4.5" cy="12" r="2.5"/>
+              <circle cx="19.5" cy="12" r="2.5"/>
+              <path d="M7 12h2.5M14.5 12H17"/>
+              <rect x="9.5" y="9.5" width="5" height="5" rx="1.3"/>
+              <path d="M11 12.2l1 1 2-2" stroke-width="1.3"/>
+              <path d="M4.5 6V4.5M19.5 6V4.5M4.5 18v1.5M19.5 18v1.5" opacity="0.4"/>
             </svg>
           </div>
         </div>
@@ -1690,10 +1717,11 @@
             </h3>
           </div>
           <div class="feat-ic" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="9"/>
-              <circle cx="12" cy="12" r="3.4"/>
-              <path d="M15.4 12v2.4c0 1.4 1.1 2.1 2.4 1.9"/>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3.5"/>
+              <path d="M15.5 12v2c0 1.5 1.2 2 2.5 1.5"/>
+              <circle cx="12" cy="12" r="9" stroke-dasharray="1.8 2.4"/>
+              <path d="M3 12h1.5M19.5 12H21M12 3v1.5M12 19.5V21" opacity="0.35"/>
             </svg>
           </div>
         </div>
@@ -1714,10 +1742,12 @@
             </h3>
           </div>
           <div class="feat-ic" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-              <ellipse cx="12" cy="5.5" rx="7" ry="2"/>
-              <path d="M5 5.5v4.5c0 1.1 3.1 2 7 2s7-.9 7-2V5.5"/>
-              <path d="M5 12v4.5c0 1.1 3.1 2 7 2s7-.9 7-2V12"/>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <ellipse cx="12" cy="5.5" rx="6" ry="1.8"/>
+              <path d="M6 5.5V8c0 1 2.7 1.8 6 1.8S18 9 18 8V5.5"/>
+              <path d="M6 10v2.5c0 1 2.7 1.8 6 1.8s6-.8 6-1.8V10" opacity="0.6"/>
+              <path d="M6 14.5V17c0 1 2.7 1.8 6 1.8s6-.8 6-1.8v-2.5" opacity="0.3"/>
+              <path d="M6 7.8V10M18 7.8V10M6 12.3v2.5M18 12.3v2.5"/>
             </svg>
           </div>
         </div>
@@ -1759,14 +1789,14 @@
     <div class="flow-wrap reveal">
       <div class="flow-col">
 
-        <!-- YOU -->
+        <!-- YOU · cycle start -->
         <div class="fnode">
           <div class="fnode-ic">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M4 20c0-3.5 3.6-6.5 8-6.5s8 3 8 6.5"/></svg>
           </div>
           <div class="fnode-info">
             <div class="fnode-label"><span class="en">You</span><span class="zh">你</span></div>
-            <div class="fnode-sub"><span class="en">give the goal</span><span class="zh">说明目标</span></div>
+            <div class="fnode-sub"><span class="en">give the goal · ↻ cycle start</span><span class="zh">说明目标 · ↻ 循环起点</span></div>
           </div>
         </div>
 
@@ -1778,7 +1808,7 @@
         <!-- YOUR AGENT -->
         <div class="fnode fnode-agent">
           <div class="fnode-ic">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.9 2.6 2.6.9-2.6.9L19 22.5l-.9-2.6-2.6-.9 2.6-.9z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.9 2.6 2.6.9-2.6.9L19 22.5l-.9-2.6-2.6-.9 2.6-.9z"/></svg>
           </div>
           <div class="fnode-info">
             <div class="fnode-label"><span class="en">Your Agent</span><span class="zh">你的 Agent</span></div>
@@ -1792,14 +1822,20 @@
           <div class="fconn-label"><span class="en">delegates task</span><span class="zh">委派任务</span></div>
         </div>
 
-        <!-- CLAUDE CODE -->
+        <!-- ANY AI -->
         <div class="fnode">
           <div class="fnode-ic">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="4.5" cy="12" r="2.2"/><circle cx="19.5" cy="12" r="2.2"/>
+              <circle cx="12" cy="4.5" r="2.2"/><circle cx="12" cy="19.5" r="2.2"/>
+              <path d="M6.5 11l3.8-4.8M13.8 17.9l3.7-4.7"/>
+              <path d="M6.5 13l3.8 4.8M13.8 6.1l3.7 4.7"/>
+              <circle cx="12" cy="12" r="2" fill="rgba(67,97,238,0.15)" stroke-width="1.3"/>
+            </svg>
           </div>
           <div class="fnode-info">
-            <div class="fnode-label"><span class="en">Claude Code</span><span class="zh">Claude Code</span></div>
-            <div class="fnode-sub"><span class="en">executes tools · stateless · no memory of you</span><span class="zh">执行工具 · 无状态 · 不了解你</span></div>
+            <div class="fnode-label"><span class="en">Any AI</span><span class="zh">任意 AI</span></div>
+            <div class="fnode-sub"><span class="en">GPT · Gemini · Claude Code — any executor</span><span class="zh">GPT · Gemini · Claude Code — 任意执行器</span></div>
           </div>
         </div>
 
@@ -1811,7 +1847,7 @@
         <!-- AGENT REVIEWS -->
         <div class="fnode fnode-agent">
           <div class="fnode-ic">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
           </div>
           <div class="fnode-info">
             <div class="fnode-label"><span class="en">Agent reviews</span><span class="zh">Agent 审查</span></div>
@@ -1820,20 +1856,17 @@
           <div class="fnode-badge">DoraDo</div>
         </div>
 
+        <!-- UPWARD return connector -->
         <div class="fconn">
-          <div class="fconn-track"><span class="fpkt"></span></div>
+          <div class="fconn-track"><span class="fpkt up"></span><span class="fpkt up d2"></span></div>
           <div class="fconn-label"><span class="en">only what matters</span><span class="zh">只保留有用的</span></div>
         </div>
 
-        <!-- RESULT: YOU -->
-        <div class="fnode">
-          <div class="fnode-ic">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>
-          </div>
-          <div class="fnode-info">
-            <div class="fnode-label"><span class="en">You</span><span class="zh">你</span></div>
-            <div class="fnode-sub"><span class="en">see only the approved result</span><span class="zh">只看到审批后的结果</span></div>
-          </div>
+        <!-- CYCLE indicator -->
+        <div class="fcycle">
+          <div class="fcycle-line"></div>
+          <div class="fcycle-label"><span class="en">↺ loops back · awaits next goal</span><span class="zh">↺ 循环回起点 · 等待下一个目标</span></div>
+          <div class="fcycle-line r"></div>
         </div>
 
       </div>
