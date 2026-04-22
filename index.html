@@ -1,1087 +1,2312 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Dorado — 一个你，所有 Agent 都认识你</title>
+<title>Dorado — Send your Agent to do it.</title>
+<meta name="description" content="Dorado is an open-source Agent that operates on your behalf. It drives ChatGPT through long tasks, types @dorado into every AI composer, and hands signed context to other people's Agents. A2A, from day one." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,200;9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&family=Noto+Serif+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    /* product palette — canvas dark variant */
-    --paper:     #0A0D1A;
-    --paper-hi:  #141830;
-    --bg-panel:  #1A1D2E;   /* matches product sidebar */
-    --ink:       #E8EBFF;
-    --ink-dim:   #8A91A3;
-    --ink-faint: #5F6578;
-    --cream:     #FFFFFF;
-    --accent:    #4361EE;   /* electric indigo — product primary */
-    --accent-hi: #748FFC;   /* periwinkle */
-    --stream:    #0891B2;   /* data stream cyan */
-    --line:      rgba(232,235,255,0.07);
-    --line-hi:   rgba(232,235,255,0.16);
-
-    /* legacy aliases for minimal code churn */
-    --ember:     var(--accent);
-    --ember-hi:  var(--accent-hi);
-    --rust:      var(--stream);
-    --panel:     rgba(232,235,255,0.04);
+    /* primary dark palette — SpaceX / cosmic / premium */
+    --canvas:       #05070F;        /* deep space */
+    --canvas-2:     #0A0E1E;        /* one lift */
+    --surface:      #10152A;        /* card */
+    --surface-2:    #161B33;
+    --ink:          #F2F4FF;
+    --ink-soft:     #B5BBD6;
+    --ink-dim:      #7E85A0;
+    --ink-faint:    #5A607A;
+    --ink-ghost:    #3D4360;
+    --accent:       #4361EE;
+    --accent-hi:    #748FFC;
+    --accent-glow:  rgba(67,97,238,0.45);
+    --accent-soft:  rgba(67,97,238,0.14);
+    --accent-deep:  #2E46C1;
+    --stream:       #0891B2;
+    --stream-hi:    #22D3EE;
+    --navy:         #0E1224;
+    --navy-2:       #141830;
+    --navy-3:       #1C2040;
+    --navy-hi:      #E8EBFF;
+    --navy-dim:     #8A91A8;
+    --hairline:     rgba(232,235,255,0.06);
+    --hairline-hi:  rgba(232,235,255,0.14);
+    --radius-sm:    6px;
+    --radius-md:    10px;
+    --radius-lg:    16px;
+    --radius-xl:    22px;
+    --maxw:         1180px;
   }
+
+  /* demo keeps its light aesthetic — scoped override */
+  .demo-head, .demo-stage, .demo-foot {
+    --canvas:       #FDFCFA;
+    --surface:      #FFFFFF;
+    --ink:          #0F1117;
+    --ink-soft:     #2D3142;
+    --ink-dim:      #5F6578;
+    --ink-faint:    #8A91A3;
+    --ink-ghost:    #B8BCCA;
+    --hairline:     rgba(15,17,23,0.07);
+    --hairline-hi:  rgba(15,17,23,0.12);
+    --accent-soft:  #EEF0FE;
+    --accent-bg:    #EEF0FE;
+  }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
   html, body {
-    background: var(--paper);
+    background: var(--canvas);
     color: var(--ink);
-    font-family: "Inter", "Noto Serif SC", ui-sans-serif, system-ui, sans-serif;
-    font-size: 15px;
-    line-height: 1.6;
-    overflow-x: hidden;
+    font-family: "Inter", "Noto Sans SC", ui-sans-serif, system-ui, sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.55;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "ss01", "cv11";
   }
-  img, svg, canvas { max-width: 100%; }
+  img, svg { display: block; max-width: 100%; }
   a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+  ::selection { background: var(--accent); color: #fff; }
 
-  /* ── grain + paper fibre ── */
-  body::before {
-    content: ""; position: fixed; inset: 0;
-    pointer-events: none; z-index: 120;
-    opacity: 0.42; mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.92 0 0 0 0 0.93 0 0 0 0 0.98 0 0 0 0.42 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
-    animation: grain 0.8s steps(5) infinite;
-  }
-  @keyframes grain {
-    0% { transform: translate(0,0); }
-    20% { transform: translate(-2%,1%); }
-    40% { transform: translate(1%,-2%); }
-    60% { transform: translate(-1%,2%); }
-    80% { transform: translate(2%,1%); }
-    100% { transform: translate(0,0); }
-  }
-  body::after {
-    content: ""; position: fixed; inset: 0;
-    pointer-events: none; z-index: 119;
-    background: repeating-linear-gradient(0deg,
-      rgba(232,235,255,0.012) 0px, rgba(232,235,255,0.012) 1px,
-      transparent 1px, transparent 3px);
-  }
+  [data-locale="en"] .zh, [data-locale="zh"] .en { display: none; }
 
-  /* ─────────── LOADER ─────────── */
-  .loader {
-    position: fixed; inset: 0;
-    background: var(--paper);
-    z-index: 300;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    gap: 44px;
-    transition: opacity 1s ease-out, visibility 0s linear 1s;
-  }
-  .loader.done { opacity: 0; visibility: hidden; }
-  .loader-mark {
-    font-family: "Fraunces", serif;
-    font-weight: 300;
-    font-size: 56px;
-    color: var(--cream);
-    letter-spacing: 0.04em;
-  }
-  .loader-mark em { font-style: italic; font-weight: 400; }
-  .loader-line { width: 140px; height: 1px; background: rgba(232,235,255,0.08); position: relative; overflow: hidden; }
-  .loader-line div { position: absolute; inset: 0 auto 0 0; width: 0%; background: var(--ember); }
-  .loader-meta {
-    font-family: "JetBrains Mono", monospace;
-    font-size: 9.5px; color: var(--ink-faint);
-    letter-spacing: 0.35em;
-  }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
+  @media (max-width: 640px) { .wrap { padding: 0 20px; } }
+
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+  .serif { font-family: "Inter", "Noto Sans SC", ui-sans-serif, system-ui, sans-serif; }
 
   /* ─────────── NAV ─────────── */
   .nav {
-    position: fixed; top: 0; left: 0; right: 0;
-    z-index: 30;
-    padding: 22px 40px;
-    display: flex; align-items: center;
-    background: linear-gradient(to bottom, rgba(9,7,10,0.85) 0%, rgba(9,7,10,0) 100%);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    position: fixed; top: 0; left: 0; right: 0; z-index: 40;
+    background: linear-gradient(to bottom, rgba(5,7,15,0.92), rgba(5,7,15,0.4));
+    backdrop-filter: saturate(140%) blur(14px);
+    -webkit-backdrop-filter: saturate(140%) blur(14px);
+    border-bottom: 1px solid transparent;
+    transition: border-color .2s, background .2s;
   }
-  .nav-brand {
-    font-family: "Fraunces", serif;
-    font-weight: 400;
-    font-size: 20px;
-    letter-spacing: 0.01em;
-    color: var(--cream);
-    display: flex; align-items: center; gap: 10px;
+  .nav.scrolled { border-bottom-color: var(--hairline); background: rgba(5,7,15,0.92); }
+  .nav-inner {
+    max-width: var(--maxw); margin: 0 auto;
+    padding: 16px 32px;
+    display: flex; align-items: center; gap: 28px;
   }
-  .nav-brand em { font-style: italic; }
-  .nav-brand .dot {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: var(--ember);
-    box-shadow: 0 0 12px var(--ember);
-    animation: corePulse 2.4s ease-in-out infinite;
+  @media (max-width: 640px) { .nav-inner { padding: 14px 20px; gap: 14px; } }
+  .brand {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    display: inline-flex; align-items: center; gap: 10px;
+    line-height: 1;
   }
-  @keyframes corePulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(0.7); }
+  .brand .wordmark { display: inline-flex; gap: 0; letter-spacing: 0.02em; }
+  .brand .bk { color: var(--ink); }
+  .brand .md { color: var(--accent-hi); }
+  .brand:hover .md { color: #fff; transition: color .2s; }
+  .brand .mark {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 3px rgba(67,97,238,0.13);
+    animation: breathe 2.6s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(67,97,238,0.13); }
+    50% { box-shadow: 0 0 0 5px rgba(67,97,238,0.08); }
   }
   .nav-links {
-    display: flex; gap: 32px; margin-left: 60px;
-    font-size: 13px; font-weight: 400;
-    color: var(--ink-dim);
+    display: flex; gap: 26px; margin-left: 8px;
+    font-size: 14px; color: var(--ink-soft);
   }
-  .nav-links a { transition: color 0.2s; }
-  .nav-links a:hover { color: var(--ember); }
-  .nav-right {
-    margin-left: auto;
-    display: flex; gap: 18px; align-items: center;
+  .nav-links a { transition: color .15s; }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .lang {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12px; color: var(--ink-dim);
+    letter-spacing: 0.04em; padding: 6px 8px;
+    border-radius: var(--radius-sm);
   }
-  .lang-btn {
-    background: none; border: none; color: var(--ink-dim);
-    cursor: pointer; font-family: "JetBrains Mono", monospace;
-    font-size: 11px; letter-spacing: 0.2em;
-  }
-  .lang-btn .on { color: var(--cream); }
-  .nav-cta {
-    padding: 9px 18px;
-    background: var(--ember);
-    color: var(--paper);
-    font-weight: 500; font-size: 12.5px;
-    border-radius: 3px;
-    transition: background 0.2s, transform 0.2s;
+  .lang:hover { color: var(--ink); }
+  .lang .on { color: var(--ink); font-weight: 500; }
+  .btn {
     display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 16px; font-size: 14px; font-weight: 500;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    transition: all .18s ease;
+    white-space: nowrap; letter-spacing: -0.005em;
   }
-  .nav-cta:hover { background: var(--cream); transform: translateY(-1px); }
-  .gh-stars {
-    display: inline-flex; align-items: center; gap: 7px;
-    padding: 7px 11px;
-    border: 1px solid var(--line-hi);
-    border-radius: 4px;
-    font-family: "JetBrains Mono", monospace;
-    font-size: 11px;
-    color: var(--ink-dim);
-    letter-spacing: 0.08em;
-    transition: all 0.2s;
+  .btn-solid { background: #fff; color: #0A0D1A; }
+  .btn-solid:hover { background: var(--accent-hi); color: #fff; }
+  .btn-primary {
+    background: var(--accent); color: #fff;
+    box-shadow: 0 0 0 1px rgba(67,97,238,0.4), 0 8px 24px -4px rgba(67,97,238,0.55);
   }
-  .gh-stars:hover { border-color: var(--accent); color: var(--cream); background: rgba(67,97,238,0.08); }
-  .gh-stars .s { color: #f7b500; font-size: 12px; }
-  .gh-stars svg { width: 12px; height: 12px; }
+  .btn-primary:hover { background: var(--accent-hi); transform: translateY(-1px); box-shadow: 0 0 0 1px rgba(116,143,252,0.5), 0 12px 32px -4px rgba(67,97,238,0.7); }
+  .btn-ghost {
+    background: transparent; color: var(--ink);
+    border-color: var(--hairline-hi);
+  }
+  .btn-ghost:hover { border-color: var(--accent-hi); color: var(--accent-hi); background: rgba(232,235,255,0.03); }
+  .btn-lg { padding: 11px 20px; font-size: 14.5px; }
+  @media (max-width: 820px) { .nav-links { display: none; } }
+  @media (max-width: 480px) { .btn-mobile-hide { display: none; } }
 
-  @media (max-width: 820px) { .nav-links { display: none; } .nav-links.mob-hidden { display: none; } }
-
-  /* ─────────── HERO ─────────── */
+  /* ─────────── HERO · cosmic ─────────── */
   .hero {
     position: relative;
     min-height: 100vh;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
+    padding: 96px 0 60px;
+    display: flex; align-items: center;
     overflow: hidden;
-    padding: 100px 24px 80px;
+    isolation: isolate;
   }
-  /* galaxy canvas - fills behind */
-  #galaxy {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
-    z-index: 0;
+  .hero::before {
+    content: "";
+    position: absolute; inset: 0; z-index: -2;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 45%, rgba(67,97,238,0.28), transparent 70%),
+      radial-gradient(ellipse 80% 60% at 20% 90%, rgba(30,27,75,0.45), transparent 70%),
+      radial-gradient(ellipse 60% 50% at 85% 25%, rgba(8,145,178,0.18), transparent 70%),
+      linear-gradient(180deg, #05070F 0%, #0A0E1E 100%);
   }
-  .hero-core {
-    position: relative; z-index: 2;
-    display: flex; flex-direction: column; align-items: center;
+  .hero::after {
+    content: "";
+    position: absolute; left: 0; right: 0; bottom: 0;
+    height: 160px; z-index: -1;
+    background: linear-gradient(to bottom, transparent, var(--canvas));
     pointer-events: none;
   }
-  .hero-core > * { pointer-events: auto; }
-
-  .hero-wordmark {
-    font-family: "Fraunces", serif;
-    font-weight: 300;
-    font-size: clamp(80px, 14vw, 200px);
-    letter-spacing: -0.025em;
-    line-height: 0.95;
-    color: var(--cream);
-    text-shadow: 0 0 80px rgba(67,97,238,0.35);
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 1.4s cubic-bezier(0.2,0.8,0.2,1) 0.1s,
-                transform 1.6s cubic-bezier(0.2,0.8,0.2,1) 0.1s;
+  #heroCanvas {
+    position: absolute; inset: 0; z-index: -1;
+    width: 100%; height: 100%;
+    mix-blend-mode: screen;
+    opacity: 0.95;
+    pointer-events: none;
   }
-  .hero-wordmark.reveal { opacity: 1; transform: translateY(0); }
-  .hero-wordmark em {
-    font-style: italic;
-    font-weight: 400;
-    background: linear-gradient(to bottom, var(--ember-hi) 0%, var(--ember) 60%, var(--rust) 100%);
+  .hero-inner {
+    position: relative;
+    text-align: center;
+    z-index: 1;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px; color: var(--accent-hi);
+    letter-spacing: 0.32em; text-transform: uppercase;
+    padding: 8px 18px 8px 14px;
+    background: rgba(67,97,238,0.08);
+    border: 1px solid rgba(116,143,252,0.22);
+    border-radius: 999px;
+    backdrop-filter: blur(6px);
+  }
+  .hero-eyebrow .pulse {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent-hi);
+    box-shadow: 0 0 12px var(--accent-hi);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  h1.hero-h {
+    margin-top: 32px;
+    font-family: "Inter", "Noto Sans SC", ui-sans-serif, system-ui, sans-serif;
+    font-weight: 700;
+    font-size: clamp(48px, 7.8vw, 112px);
+    line-height: 0.98;
+    letter-spacing: -0.042em;
+    color: #fff;
+    text-shadow: 0 0 80px rgba(67,97,238,0.35);
+    max-width: 14ch;
+    margin-left: auto; margin-right: auto;
+  }
+  h1.hero-h em {
+    font-style: normal;
+    font-weight: 700;
+    background: linear-gradient(180deg, var(--accent-hi) 0%, var(--accent) 55%, var(--stream-hi) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+    display: inline-block;
   }
-
-  .hero-tagline {
-    margin-top: 28px;
-    font-family: "Fraunces", "Noto Serif SC", serif;
-    font-weight: 300;
-    font-size: clamp(18px, 2vw, 24px);
-    color: var(--ink);
-    letter-spacing: 0;
-    text-align: center;
-    opacity: 0;
-    transition: opacity 1s ease-out 0.9s;
+  .hero-sub {
+    margin: 30px auto 0;
+    font-size: clamp(16px, 1.6vw, 20px);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 52ch;
   }
-  .hero-tagline.reveal { opacity: 1; }
-  .hero-tagline em { font-style: italic; color: var(--ember); }
-
-  .hero-subline {
-    margin-top: 10px;
-    font-family: "JetBrains Mono", monospace;
-    font-size: 10.5px;
-    color: var(--ink-faint);
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    opacity: 0;
-    transition: opacity 1s ease-out 1.2s;
-  }
-  .hero-subline.reveal { opacity: 1; }
+  .hero-sub b { color: #fff; font-weight: 500; }
 
   .hero-ctas {
-    margin-top: 44px;
+    margin-top: 40px;
     display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;
-    opacity: 0;
-    transition: opacity 1s ease-out 1.5s;
   }
-  .hero-ctas.reveal { opacity: 1; }
-  .btn {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 13px 26px;
-    font-size: 13px; font-weight: 500;
-    border-radius: 3px;
-    transition: all 0.25s;
-    cursor: pointer;
-    border: 1px solid transparent;
+  .hero-meta {
+    margin-top: 44px;
+    display: flex; gap: 26px; flex-wrap: wrap; justify-content: center;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px; color: var(--ink-faint);
+    letter-spacing: 0.18em; text-transform: uppercase;
   }
-  .btn-primary {
-    background: var(--ember); color: var(--paper);
-    border-color: var(--ember);
-    box-shadow: 0 0 40px -10px rgba(67,97,238,0.4);
-  }
-  .btn-primary:hover { background: var(--cream); border-color: var(--cream); box-shadow: 0 0 60px -10px rgba(245,239,224,0.5); }
-  .btn-ghost {
-    background: transparent; color: var(--ink);
-    border-color: var(--line-hi);
-  }
-  .btn-ghost:hover { border-color: var(--ember); color: var(--ember); }
+  .hero-meta span { display: inline-flex; align-items: center; gap: 8px; }
+  .hero-meta .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent-hi); box-shadow: 0 0 8px var(--accent); }
 
-  /* scroll hint bottom */
-  .hero-scroll {
-    position: absolute; bottom: 30px; left: 50%;
+  .hero-scrollhint {
+    position: absolute;
+    bottom: 32px; left: 50%;
     transform: translateX(-50%);
-    font-family: "JetBrains Mono", monospace;
-    font-size: 9px; letter-spacing: 0.4em;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 9.5px; letter-spacing: 0.4em;
     color: var(--ink-faint);
-    z-index: 3;
     text-transform: uppercase;
-    display: flex; align-items: center; gap: 10px;
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    z-index: 2;
     opacity: 0;
-    transition: opacity 1s ease-out 2s;
+    animation: fadein 1s ease .8s forwards;
   }
-  .hero-scroll.reveal { opacity: 1; }
-  .hero-scroll::before { content: ""; width: 1px; height: 30px; background: linear-gradient(to bottom, transparent, var(--ink-faint)); animation: scrollLine 2.4s ease-in-out infinite; }
+  .hero-scrollhint::after {
+    content: ""; width: 1px; height: 36px;
+    background: linear-gradient(to bottom, var(--ink-faint), transparent);
+    animation: scrollLine 2.2s ease-in-out infinite;
+  }
   @keyframes scrollLine {
     0% { transform: scaleY(0); transform-origin: top; }
     50% { transform: scaleY(1); transform-origin: top; }
     51% { transform-origin: bottom; }
     100% { transform: scaleY(0); transform-origin: bottom; }
   }
+  @keyframes fadein { to { opacity: 1; } }
 
-  /* floating tooltip for galaxy node */
-  .galaxy-tooltip {
-    position: absolute;
-    z-index: 4;
-    padding: 6px 12px;
-    background: rgba(15,12,16,0.92);
-    border: 1px solid var(--line-hi);
-    color: var(--cream);
-    font-family: "JetBrains Mono", monospace;
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    white-space: nowrap;
-    opacity: 0;
-    transform: translate(-50%, -140%);
-    transition: opacity 0.15s;
-    pointer-events: none;
-  }
-  .galaxy-tooltip.on { opacity: 1; }
-  .galaxy-tooltip::before {
-    content: "";
-    position: absolute;
-    left: 50%; bottom: -5px;
-    width: 1px; height: 12px;
-    background: var(--line-hi);
-  }
+  /* ─────────── LIVE DEMO · multi-scene ─────────── */
+  .demo-wrap { padding: 48px 0 120px; position: relative; }
+  @media (max-width: 640px) { .demo-wrap { padding: 28px 0 72px; } }
 
-  /* ─────────── MARQUEE - brands ─────────── */
-  .marquee-wrap {
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-    padding: 22px 0;
-    overflow: hidden;
-    position: relative;
-  }
-  .marquee-wrap::before, .marquee-wrap::after {
-    content: ""; position: absolute; top: 0; bottom: 0; width: 120px; z-index: 2;
-    pointer-events: none;
-  }
-  .marquee-wrap::before { left: 0; background: linear-gradient(to right, var(--paper), transparent); }
-  .marquee-wrap::after  { right: 0; background: linear-gradient(to left, var(--paper), transparent); }
-  .marquee {
-    display: flex; gap: 80px;
-    animation: slide 40s linear infinite;
-    width: fit-content;
-  }
-  .marquee .item {
-    display: flex; align-items: center; gap: 8px;
-    color: var(--ink-faint);
-    font-family: "JetBrains Mono", monospace;
-    font-size: 12px; letter-spacing: 0.18em;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-  @keyframes slide {
-    from { transform: translateX(0); }
-    to   { transform: translateX(-50%); }
-  }
-
-  /* ─────────── SECTIONS ─────────── */
-  .section {
-    padding: 160px 40px;
-    max-width: 1280px;
-    margin: 0 auto;
-  }
-  .section-eyebrow {
-    font-family: "JetBrains Mono", monospace;
-    font-size: 10.5px;
-    color: var(--ember);
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    margin-bottom: 22px;
-  }
-  .section-head {
-    font-family: "Fraunces", "Noto Serif SC", serif;
-    font-weight: 300;
-    font-size: clamp(36px, 5vw, 64px);
-    line-height: 1.05;
-    letter-spacing: -0.015em;
-    color: var(--cream);
-    max-width: 900px;
-    margin-bottom: 80px;
-  }
-  .section-head em { font-style: italic; color: var(--ember); font-weight: 400; }
-
-  /* feature row */
-  .feature {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: center;
-    padding: 80px 0;
-    border-top: 1px solid var(--line);
-  }
-  .feature:first-of-type { border-top: none; }
-  .feature.reverse .feat-text { order: 2; }
-  @media (max-width: 900px) {
-    .feature { grid-template-columns: 1fr; gap: 32px; padding: 48px 0; }
-    .feature.reverse .feat-text { order: 0; }
-  }
-  .feat-label {
-    font-family: "JetBrains Mono", monospace;
-    font-size: 11px; color: var(--ember);
-    letter-spacing: 0.25em; text-transform: uppercase;
-    margin-bottom: 18px;
-    display: inline-flex; align-items: center; gap: 10px;
-  }
-  .feat-label::before {
-    content: ""; width: 20px; height: 1px; background: var(--ember);
-  }
-  .feat-title {
-    font-family: "Fraunces", "Noto Serif SC", serif;
-    font-weight: 300;
-    font-size: clamp(30px, 4vw, 44px);
-    line-height: 1.1;
-    letter-spacing: -0.01em;
-    color: var(--cream);
-    margin-bottom: 22px;
-  }
-  .feat-title em { font-style: italic; color: var(--ember); font-weight: 400; }
-  .feat-body {
-    color: var(--ink-dim); font-size: 16px; line-height: 1.75;
-    max-width: 480px;
-  }
-  .feat-body p + p { margin-top: 14px; }
-  .feat-body b { color: var(--ember); font-weight: 500; font-family: "JetBrains Mono", mono; font-size: 14px; }
-
-  /* product mocks — tighter */
-  .mock {
-    background: #141830;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 40px 100px -40px rgba(0,0,0,0.9);
-  }
-  .mock-bar {
-    display: flex; align-items: center; gap: 6px;
-    padding: 11px 14px;
-    border-bottom: 1px solid var(--line);
-    background: rgba(232,235,255,0.015);
-    font-family: "JetBrains Mono", monospace;
-    font-size: 10px; color: var(--ink-faint); letter-spacing: 0.1em;
-  }
-  .mock-bar .d { width: 8px; height: 8px; border-radius: 50%; background: rgba(232,235,255,0.15); }
-  .mock-bar .d.on { background: var(--ember); }
-  .mock-bar .url { margin-left: 8px; }
-
-  /* chat mock */
-  .mock-chat { display: grid; grid-template-columns: 84px 1fr 170px; height: 350px; font-size: 11px; }
-  @media (max-width: 900px) { .mock-chat { grid-template-columns: 60px 1fr 130px; height: 300px; } }
-  .mc-side { background: #0F1224; border-right: 1px solid var(--line); padding: 14px 8px; display: flex; flex-direction: column; gap: 12px; }
-  .mc-side .logo { width: 22px; height: 22px; border-radius: 6px; background: rgba(67,97,238,0.15); color: var(--ember); display: flex; align-items: center; justify-content: center; font-size: 12px; margin-bottom: 6px; }
-  .mc-side .item { font-family: "JetBrains Mono", mono; font-size: 9px; color: var(--ink-faint); letter-spacing: 0.1em; }
-  .mc-side .item.on { color: var(--ember); }
-  .mc-main { padding: 16px; overflow: hidden; }
-  .bubble { padding: 10px 14px; border-radius: 10px; margin-bottom: 10px; max-width: 72%; font-size: 11px; line-height: 1.5; }
-  .bubble.u { margin-left: auto; background: rgba(67,97,238,0.1); color: var(--cream); }
-  .bubble.a { background: rgba(232,235,255,0.04); color: var(--ink); }
-  .chip { display: inline-block; font-family: "JetBrains Mono", mono; font-size: 9px; color: var(--ember); background: rgba(67,97,238,0.08); padding: 2px 8px; border-radius: 3px; margin-bottom: 6px; letter-spacing: 0.1em; }
-  .mc-brain { padding: 14px 12px; background: #0F1224; border-left: 1px solid var(--line); overflow: hidden; }
-  .mc-brain h { display: block; color: var(--ember); font-family: "JetBrains Mono", mono; font-size: 8.5px; letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 10px; }
-  .mc-brain g { display: block; padding: 6px 0; border-bottom: 1px solid var(--line); color: var(--ink-dim); font-size: 10px; line-height: 1.45; }
-  .mc-brain g b { display: block; color: var(--ember); font-weight: 400; font-family: "JetBrains Mono", mono; font-size: 8.5px; letter-spacing: 0.1em; margin-bottom: 2px; }
-
-  /* composer mock */
-  .mock-composer { padding: 20px 22px; }
-  .mock-composer .url { color: var(--ink-faint); font-size: 10px; margin-bottom: 14px; font-family: "JetBrains Mono", mono; }
-  .mock-composer .ta { background: rgba(232,235,255,0.04); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; font-size: 12.5px; line-height: 1.6; color: var(--ink); min-height: 110px; }
-  .mock-composer .at { color: var(--ember); font-weight: 600; }
-  .mock-composer .flash { margin-top: 12px; font-family: "JetBrains Mono", mono; font-size: 10.5px; color: var(--ember); }
-  .mock-composer .rows { margin-top: 12px; font-family: "JetBrains Mono", mono; font-size: 10.5px; color: var(--ink-dim); line-height: 1.95; }
-  .mock-composer .ok { color: #7cbb8a; margin-right: 6px; }
-
-  /* delegate mock */
-  .mock-delegate { padding: 22px 24px; }
-  .mock-delegate .task { background: rgba(232,235,255,0.03); border: 1px solid var(--line); border-radius: 8px; padding: 18px 20px; }
-  .mock-delegate .lab { font-family: "JetBrains Mono", mono; font-size: 9px; color: var(--ember); letter-spacing: 0.28em; margin-bottom: 8px; }
-  .mock-delegate .goal { color: var(--cream); font-size: 13.5px; margin-bottom: 14px; font-weight: 500; }
-  .mock-delegate .meta { display: flex; gap: 18px; color: var(--ink-faint); font-family: "JetBrains Mono", mono; font-size: 9px; letter-spacing: 0.1em; margin-bottom: 14px; }
-  .mock-delegate .bar { height: 2px; background: rgba(232,235,255,0.08); margin-bottom: 16px; position: relative; }
-  .mock-delegate .bar::after { content:""; position:absolute; inset: 0 55% 0 0; background: var(--ember); }
-  .mock-delegate .rev { padding: 12px 14px; background: rgba(67,97,238,0.04); border-left: 2px solid var(--ember); color: var(--ink-dim); font-size: 11.5px; line-height: 1.65; font-style: italic; }
-  .mock-delegate .rev b { display: block; color: var(--ember); font-style: normal; font-family: "JetBrains Mono", mono; font-size: 9px; letter-spacing: 0.22em; margin-bottom: 6px; }
-
-  /* bridge mock */
-  .mock-bridge { padding: 22px 24px; }
-  .mock-bridge .cap { background: rgba(232,235,255,0.03); border: 1px solid var(--line); border-radius: 8px; padding: 18px 20px; }
-  .mock-bridge .heading { font-family: "Fraunces", serif; font-style: italic; font-size: 22px; color: var(--cream); margin-bottom: 14px; }
-  .mock-bridge .row { display: grid; grid-template-columns: 90px 1fr; gap: 10px; padding: 7px 0; font-family: "JetBrains Mono", mono; font-size: 10.5px; color: var(--ink-dim); border-bottom: 1px solid var(--line); }
-  .mock-bridge .row:last-of-type { border: none; }
-  .mock-bridge .k { color: var(--ember); letter-spacing: 0.18em; text-transform: uppercase; font-size: 9px; }
-  .mock-bridge .v { color: var(--ink); }
-  .mock-bridge .sig { color: var(--rust); }
-  .mock-bridge .act { display: inline-block; margin-top: 14px; padding: 8px 16px; border: 1px solid var(--ember); color: var(--ember); font-family: "JetBrains Mono", mono; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; border-radius: 3px; }
-
-  /* stats band */
-  .stats {
-    padding: 100px 40px;
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
+  .demo-head { margin-bottom: 20px; }
+  .demo-tabs {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 40px;
-    max-width: 1280px;
-    margin: 0 auto;
+    gap: 0;
+    position: relative;
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--surface);
+    box-shadow: 0 1px 2px rgba(15,17,23,0.03);
   }
-  @media (max-width: 900px) { .stats { grid-template-columns: repeat(2, 1fr); } }
-  .stat {
+  @media (max-width: 820px) {
+    .demo-tabs { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 480px) {
+    .demo-tabs { grid-template-columns: 1fr; }
+  }
+  .tab {
+    padding: 14px 18px;
     text-align: left;
+    border-right: 1px solid var(--hairline);
+    background: transparent;
+    cursor: pointer;
+    transition: background .18s, color .18s;
+    display: flex; flex-direction: column; gap: 3px;
+    position: relative;
+    min-height: 68px;
   }
-  .stat-num {
-    font-family: "Fraunces", serif; font-weight: 300;
-    font-size: clamp(44px, 5vw, 64px); line-height: 1;
-    color: var(--cream);
-    letter-spacing: -0.02em;
+  .tab:last-child { border-right: none; }
+  @media (max-width: 820px) {
+    .tab:nth-child(2n) { border-right: none; }
+    .tab:nth-child(-n+2) { border-bottom: 1px solid var(--hairline); }
+  }
+  @media (max-width: 480px) {
+    .tab { border-right: none; border-bottom: 1px solid var(--hairline); }
+    .tab:last-child { border-bottom: none; }
+  }
+  .tab:hover { background: rgba(15,17,23,0.02); }
+  .tab.on { background: #fff; }
+  .tab.on::after {
+    content: "";
+    position: absolute; left: 0; right: 0; top: 0;
+    height: 2px; background: var(--accent);
+  }
+  .tab-n {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 10px; color: var(--ink-ghost);
+    letter-spacing: 0.2em; text-transform: uppercase;
+  }
+  .tab.on .tab-n { color: var(--accent); }
+  .tab-l {
+    font-size: 15px; font-weight: 500;
+    color: var(--ink-dim);
+    letter-spacing: -0.01em;
+  }
+  .tab.on .tab-l { color: var(--ink); }
+  .tab-d {
+    font-size: 12px; color: var(--ink-faint);
+    letter-spacing: -0.005em;
+    line-height: 1.35;
+  }
+  .tab-bar {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 2px;
+    background: transparent;
+    grid-column: 1 / -1;
+    pointer-events: none;
+    display: none;
+  }
+  .tab-bar-fill {
+    position: absolute; left: 0; bottom: 0;
+    height: 2px;
+    background: var(--accent-hi);
+    width: 0%;
+    transition: width .2s linear;
+    opacity: 0.5;
+  }
+
+  /* stage */
+  .demo-stage {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--hairline-hi);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    min-height: 560px;
+    box-shadow:
+      0 1px 2px rgba(15,17,23,0.04),
+      0 28px 64px -28px rgba(15,17,23,0.16),
+      0 60px 140px -40px rgba(67,97,238,0.2);
+  }
+  @media (max-width: 720px) { .demo-stage { min-height: 640px; border-radius: var(--radius-lg); } }
+  .scene {
+    position: absolute; inset: 0;
+    opacity: 0; pointer-events: none;
+    transition: opacity .45s ease;
+    display: flex; flex-direction: column;
+  }
+  .scene.on { opacity: 1; pointer-events: auto; }
+
+  /* shared chrome */
+  .scene-chrome {
+    padding: 12px 18px;
+    display: flex; align-items: center; gap: 14px;
+    border-bottom: 1px solid var(--hairline);
+    background: rgba(255,255,255,0.8);
+    backdrop-filter: saturate(130%) blur(8px);
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .chrome-tl { display: flex; align-items: center; gap: 12px; }
+  .chrome-dots { display: inline-flex; gap: 6px; }
+  .chrome-dots i {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--hairline-hi);
+  }
+  .chrome-dots i:first-child { background: #ff5f57; }
+  .chrome-dots i:nth-child(2) { background: #febc2e; }
+  .chrome-dots i:nth-child(3) { background: #28c840; }
+  .chrome-title {
+    color: var(--ink-dim);
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11.5px; letter-spacing: 0.04em;
+  }
+  .chrome-tr {
+    margin-left: auto;
+    font-size: 10.5px; color: var(--ink-dim);
+    letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .scene-chrome-fake .chrome-title { color: var(--ink-soft); }
+
+  .scene-body { flex: 1; min-height: 0; display: flex; overflow: hidden; }
+
+  /* shared mini button */
+  .btn-mini {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 12px;
+    font-size: 12px; font-weight: 500;
+    border: 1px solid var(--hairline-hi);
+    border-radius: 6px;
+    background: #fff; color: var(--ink-soft);
+    cursor: pointer; transition: all .14s;
+  }
+  .btn-mini:hover { border-color: var(--ink); color: var(--ink); }
+  .btn-mini.ok { border-color: rgba(67,97,238,0.4); color: var(--accent); background: var(--accent-bg); }
+  .btn-mini.primary {
+    background: var(--accent); color: #fff; border-color: var(--accent);
+  }
+  .btn-mini.primary:hover { background: var(--accent-deep); border-color: var(--accent-deep); color: #fff; }
+
+  /* ═══ Scene 1 · DELEGATE ═══ */
+  .delegate-body {
+    background:
+      radial-gradient(ellipse 500px 300px at 10% 10%, rgba(67,97,238,0.05), transparent 70%),
+      var(--canvas);
+    padding: 28px;
+    gap: 24px;
+  }
+  @media (max-width: 820px) {
+    .delegate-body { padding: 20px; gap: 16px; flex-direction: column; }
+  }
+  .del-left { flex: 1.1; min-width: 0; display: flex; flex-direction: column; }
+  .del-right { flex: 1; min-width: 0; display: flex; flex-direction: column;
+    background: var(--navy); border-radius: 12px; padding: 16px 18px; color: var(--navy-hi);
+  }
+  .del-card {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: 12px;
+    padding: 20px 22px;
+    flex: 1; display: flex; flex-direction: column;
+    box-shadow: 0 1px 2px rgba(15,17,23,0.04);
+  }
+  .del-label {
+    font-size: 10.5px; color: var(--ink-dim);
+    letter-spacing: 0.2em; text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .del-goal {
+    font-size: 21px;
+    font-weight: 400;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+  .del-meta {
+    display: flex; gap: 14px; flex-wrap: wrap;
+    font-size: 10.5px; color: var(--ink-dim);
+    letter-spacing: 0.1em; text-transform: uppercase;
     margin-bottom: 12px;
   }
-  .stat-num em { font-style: italic; color: var(--ember); }
-  .stat-label {
-    font-family: "JetBrains Mono", mono;
-    font-size: 11px; color: var(--ink-dim);
-    letter-spacing: 0.25em; text-transform: uppercase;
+  .del-meta .dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent);
+    display: inline-block; margin-right: 6px;
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+  .del-progress {
+    height: 3px; background: var(--hairline);
+    border-radius: 999px; overflow: hidden; margin-bottom: 20px;
+  }
+  .del-progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-hi));
+    width: 0%; transition: width .6s cubic-bezier(0.2,0.8,0.2,1);
+  }
+  .del-review {
+    border-top: 1px solid var(--hairline);
+    padding-top: 18px;
+    margin-top: auto;
+    animation: fadeUp .5s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+  .del-review-k {
+    font-size: 10px; color: var(--accent);
+    letter-spacing: 0.22em; text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .del-review-k::before {
+    content: ""; width: 20px; height: 1px; background: var(--accent);
+  }
+  .del-review-t {
+    font-size: 15.5px; font-style: italic; font-weight: 400;
+    color: var(--ink); line-height: 1.5;
+    padding: 12px 14px;
+    background: var(--accent-bg);
+    border-left: 2px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 14px;
+  }
+  .del-review-act { display: flex; gap: 8px; }
+
+  .drv-head {
+    font-size: 10px; color: var(--accent-hi);
+    letter-spacing: 0.2em; text-transform: uppercase;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(232,235,255,0.08);
+    margin-bottom: 12px;
+    flex-shrink: 0;
+  }
+  .drv-feed {
+    display: flex; flex-direction: column; gap: 10px;
+    overflow: hidden;
+    flex: 1;
+  }
+  .drv-line {
+    font-size: 12.5px; line-height: 1.5;
+    padding: 9px 12px;
+    border-radius: 7px;
+    opacity: 0; transform: translateY(4px);
+    transition: opacity .3s ease, transform .3s ease;
+  }
+  .drv-line.on { opacity: 1; transform: none; }
+  .drv-line.d { background: rgba(67,97,238,0.16); color: #fff; }
+  .drv-line.g { background: rgba(232,235,255,0.06); color: var(--navy-dim); }
+  .drv-line .who {
+    display: inline-block;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    margin-right: 8px;
+  }
+  .drv-line.d .who { color: var(--accent-hi); }
+  .drv-line.g .who { color: var(--navy-dim); }
+
+  /* ═══ Scene 2 · @ANYWHERE ═══ */
+  .any-body {
+    background:
+      linear-gradient(to bottom, #FAFAF9 0%, #FFFFFF 100%);
+    padding: 40px 44px;
+    flex-direction: column;
+    gap: 18px;
+  }
+  @media (max-width: 640px) { .any-body { padding: 24px 20px; } }
+  .any-composer {
+    display: grid;
+    grid-template-columns: 36px 1fr 36px;
+    align-items: center; gap: 10px;
+    padding: 12px 14px;
+    background: #fff;
+    border: 1px solid var(--hairline-hi);
+    border-radius: 24px;
+    box-shadow: 0 2px 10px rgba(15,17,23,0.05);
+  }
+  .any-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: linear-gradient(135deg, #10a37f, #0d7e63);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .any-ta {
+    min-height: 48px; padding: 10px 6px;
+    font-size: 15px; color: var(--ink);
+    line-height: 1.4;
+  }
+  .any-ta .at {
+    color: var(--accent); font-weight: 500;
+    background: var(--accent-bg); padding: 1px 6px;
+    border-radius: 4px; font-family: inherit;
+  }
+  .any-send {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--ink); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; justify-self: end;
+  }
+  .any-capsule {
+    margin: 4px 16px 0;
+    padding: 12px 16px;
+    background: var(--accent-bg);
+    border: 1px solid rgba(67,97,238,0.22);
+    border-radius: 10px;
+    opacity: 0; transform: translateY(6px);
+    transition: opacity .4s, transform .4s;
+  }
+  .any-capsule.on { opacity: 1; transform: none; }
+  .any-capsule-k {
+    font-size: 11px; color: var(--accent-deep);
+    letter-spacing: 0.1em;
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 8px;
+  }
+  .any-capsule-k .pulse {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+  .any-capsule-k b { color: var(--ink); font-weight: 600; }
+  .any-capsule-tags {
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .any-capsule-tags span {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 10.5px; color: var(--accent-deep);
+    padding: 3px 9px;
+    background: rgba(67,97,238,0.08);
+    border-radius: 4px;
+    letter-spacing: 0.04em;
   }
 
-  /* finale */
-  .finale {
-    padding: 160px 40px;
-    text-align: center;
-    border-top: 1px solid var(--line);
+  .any-response {
+    margin-top: 10px;
+    padding: 18px 22px 22px;
+    border-top: 1px solid var(--hairline);
+    opacity: 0; transform: translateY(6px);
+    transition: opacity .45s, transform .45s;
+  }
+  .any-response.on { opacity: 1; transform: none; }
+  .any-response-h {
+    font-size: 10.5px; color: var(--ink-dim);
+    letter-spacing: 0.2em; text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .any-response-h::before {
+    content: ""; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent);
+  }
+  .any-response-t {
+    font-size: 15.5px; line-height: 1.6; color: var(--ink);
+  }
+  .any-response-t .hl { color: var(--accent); font-style: italic; font-weight: 500; }
+
+  /* ═══ Scene 3 · BRIDGE ═══ */
+  .bridge-body {
+    background:
+      radial-gradient(ellipse 500px 300px at 50% 50%, rgba(67,97,238,0.05), transparent 70%),
+      var(--canvas);
+    padding: 28px;
+    gap: 0;
+    align-items: stretch;
     position: relative;
+  }
+  @media (max-width: 820px) {
+    .bridge-body { flex-direction: column; padding: 20px; gap: 16px; }
+  }
+  .brg-side {
+    flex: 1; min-width: 0;
+    padding: 20px 22px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: 12px;
+    display: flex; flex-direction: column;
+    box-shadow: 0 1px 2px rgba(15,17,23,0.04);
+  }
+  .brg-left { border-right: 2px solid var(--accent-bg); }
+  .brg-right { border-left: 2px solid var(--accent-bg); background: var(--canvas); }
+  @media (max-width: 820px) {
+    .brg-left, .brg-right { border: 1px solid var(--hairline); }
+  }
+  .brg-side-k {
+    font-size: 10.5px; color: var(--ink-dim);
+    letter-spacing: 0.2em; text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .brg-side-k::before {
+    content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--accent);
+  }
+  .brg-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+  .brg-row {
+    display: grid;
+    grid-template-columns: 84px 1fr;
+    gap: 10px;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12px;
+    padding: 7px 10px;
+    background: var(--canvas);
+    border: 1px solid var(--hairline);
+    border-radius: 6px;
+  }
+  .brg-row .k { color: var(--ink-dim); letter-spacing: 0.14em; text-transform: uppercase; font-size: 10px; align-self: center; }
+  .brg-row .v { color: var(--ink); }
+  .brg-row .v.accent { color: var(--accent); font-weight: 500; }
+  .brg-row .v.sig { color: var(--stream); }
+
+  .brg-wire {
+    flex: 0 0 80px;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 -12px;
+  }
+  @media (max-width: 820px) {
+    .brg-wire { flex-basis: 40px; margin: -8px 0; }
+    .brg-wire svg { transform: rotate(90deg); width: 40px; height: 40px; }
+  }
+  .brg-wire svg { width: 100%; height: 40px; }
+  .brg-packet {
+    position: absolute;
+    left: 0;
+    font-size: 14px;
+    color: var(--accent);
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    opacity: 0;
+    transition: left 1.4s cubic-bezier(0.4,0,0.2,1), opacity .3s;
+    text-shadow: 0 0 12px rgba(67,97,238,0.6);
+  }
+  .brg-packet.go { opacity: 1; left: calc(100% - 14px); }
+
+  .brg-empty {
+    padding: 14px;
+    color: var(--ink-faint);
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-align: center;
+    background: rgba(15,17,23,0.02);
+    border: 1px dashed var(--hairline-hi);
+    border-radius: 8px;
+  }
+  .brg-received { display: flex; flex-direction: column; gap: 10px; animation: fadeUp .4s ease; }
+  .brg-countdown {
+    font-size: 11px; color: var(--accent);
+    letter-spacing: 0.14em;
+    padding: 8px 10px; background: var(--accent-bg); border-radius: 6px;
+    text-align: center;
+  }
+  .brg-revoke {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 4px;
+  }
+  .brg-audit { font-size: 10px; color: var(--ink-dim); letter-spacing: 0.12em; text-transform: uppercase; }
+  .stream { color: var(--stream); }
+
+  /* ═══ Scene 4 · MEMORY ═══ */
+  .memory-body {
+    display: grid;
+    grid-template-columns: 1fr 260px;
+    background: var(--canvas);
+  }
+  @media (max-width: 820px) {
+    .memory-body { grid-template-columns: 1fr; }
+    .mem-brain { display: none; }
+  }
+  .mem-main {
+    display: flex; flex-direction: column;
+    min-height: 0;
+  }
+  .mem-topbar {
+    padding: 12px 22px;
+    border-bottom: 1px solid var(--hairline);
+    font-size: 11px; color: var(--ink-dim);
+    letter-spacing: 0.14em; text-transform: uppercase;
+    background: rgba(255,255,255,0.6);
+  }
+  .mem-topbar b { color: var(--ink); font-weight: 500; }
+  .mem-scroll {
+    flex: 1; padding: 22px 26px 10px;
+    display: flex; flex-direction: column; gap: 14px;
     overflow: hidden;
   }
-  .finale::before {
-    content: ""; position: absolute; inset: 0;
-    background: radial-gradient(ellipse at center, rgba(67,97,238,0.06), transparent 60%);
+  @media (max-width: 640px) { .mem-scroll { padding: 16px 16px 8px; } }
+
+  .bubble {
+    max-width: 78%;
+    padding: 12px 16px;
+    font-size: 14.5px; line-height: 1.55;
+    border-radius: 14px;
+    opacity: 0; transform: translateY(6px);
+    transition: opacity .4s ease, transform .4s ease;
+  }
+  .bubble.on { opacity: 1; transform: none; }
+  .bubble.user {
+    align-self: flex-end;
+    background: var(--ink); color: #fff;
+    border-bottom-right-radius: 4px;
+  }
+  .bubble.assistant {
+    align-self: flex-start;
+    background: #fff;
+    border: 1px solid var(--hairline);
+    color: var(--ink);
+    border-bottom-left-radius: 4px;
+    max-width: 88%;
+  }
+  .bubble.assistant .recall-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 10.5px; color: var(--accent);
+    letter-spacing: 0.14em; text-transform: uppercase;
+    margin-bottom: 8px;
+    padding: 3px 8px;
+    background: var(--accent-bg);
+    border-radius: 999px;
+  }
+  .bubble.assistant .recall-chip::before {
+    content: ""; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent);
+  }
+  .bubble .caret {
+    display: inline-block; width: 2px; height: 1em;
+    background: currentColor; vertical-align: -2px;
+    margin-left: 1px;
+    animation: caretBlink 0.9s steps(2) infinite;
+  }
+  @keyframes caretBlink { 50% { opacity: 0; } }
+  .bubble .hl { color: var(--accent); font-weight: 500; font-style: italic; }
+
+  .mem-composer {
+    padding: 14px 20px 18px;
+    border-top: 1px solid var(--hairline);
+    background: rgba(255,255,255,0.7);
+  }
+  .mem-composer .box {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 14px;
+    background: #fff;
+    border: 1px solid var(--hairline-hi);
+    border-radius: 999px;
+    font-size: 14px; color: var(--ink-dim);
+  }
+  .mem-composer .box .ph { flex: 1; }
+  .mem-composer .send {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--ink); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+  }
+  .mem-brain {
+    background: var(--navy-2);
+    color: var(--navy-hi);
+    padding: 18px 16px;
+    display: flex; flex-direction: column;
+    border-left: 1px solid rgba(232,235,255,0.06);
+    overflow: hidden;
+  }
+  .mem-brain h4 {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 10.5px; color: var(--navy-dim);
+    letter-spacing: 0.22em; text-transform: uppercase;
+    font-weight: 500;
+    padding: 0 4px 12px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid rgba(232,235,255,0.06);
+    margin-bottom: 10px;
+  }
+  .mem-brain h4 .blink {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  .mem-brain .scope {
+    font-size: 11px; color: var(--navy-dim);
+    padding: 0 4px 12px;
+    letter-spacing: 0.04em;
+  }
+  .mem-brain .scope b { color: var(--accent-hi); font-weight: 500; }
+  .mem-brain .fact-list {
+    display: flex; flex-direction: column; gap: 8px; overflow: hidden;
+  }
+  .fact {
+    padding: 9px 11px;
+    background: rgba(67,97,238,0.04);
+    border: 1px solid rgba(232,235,255,0.06);
+    border-radius: 7px;
+    opacity: 0; transform: translateY(6px);
+    transition: opacity .45s ease, transform .45s cubic-bezier(0.2,0.8,0.2,1);
+  }
+  .fact.on { opacity: 1; transform: none; }
+  .fact .k {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 9px; color: var(--accent-hi);
+    letter-spacing: 0.16em; text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .fact .v { font-size: 12px; color: var(--navy-hi); line-height: 1.4; }
+  .mem-brain .foot {
+    margin-top: auto; padding-top: 14px;
+    border-top: 1px solid rgba(232,235,255,0.06);
+    display: flex; justify-content: space-between;
+    font-size: 10px; color: var(--navy-dim);
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .mem-brain .foot b { color: var(--accent-hi); font-weight: 500; }
+
+  /* demo foot */
+  .demo-foot {
+    margin-top: 16px;
+    text-align: center;
+    font-size: 11.5px;
+    color: var(--ink-dim);
+    letter-spacing: 0.04em;
+  }
+  .demo-gh { color: var(--accent); margin-left: 6px; }
+  .demo-gh:hover { text-decoration: underline; }
+
+  /* ─────────── SECTION FRAMES ─────────── */
+  section.block { padding: 120px 0; position: relative; }
+  @media (max-width: 640px) { section.block { padding: 72px 0; } }
+  .block-head { max-width: 760px; margin-bottom: 56px; }
+  .block-eyebrow {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11.5px; color: var(--ink-dim);
+    letter-spacing: 0.22em; text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .block-eyebrow::before {
+    content: ""; width: 22px; height: 1px; background: var(--accent);
+  }
+  .block-title {
+    font-family: "Inter", "Noto Sans SC", ui-sans-serif, system-ui, sans-serif;
+    font-weight: 500;
+    font-size: clamp(32px, 5vw, 56px);
+    line-height: 1.04;
+    letter-spacing: -0.024em;
+    color: var(--ink);
+  }
+  .block-title em { font-style: normal; color: var(--accent-hi); font-weight: 700; }
+  .block-lede {
+    margin-top: 22px; font-size: 17.5px;
+    color: var(--ink-soft); max-width: 62ch; line-height: 1.55;
+  }
+
+  /* ─────────── TRUST STRIP ─────────── */
+  .trust {
+    padding: 28px 0;
+    border-top: 1px solid var(--hairline);
+    border-bottom: 1px solid var(--hairline);
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 32px; flex-wrap: wrap;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11.5px; color: var(--ink-dim);
+    letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .trust-label b { color: var(--ink); font-weight: 500; }
+  .trust-items { display: flex; gap: 30px; flex-wrap: wrap; }
+  .trust-items span { display: inline-flex; align-items: center; gap: 8px; }
+  .trust-items .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+
+  /* ─────────── FEATURES ─────────── */
+  .features {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    background: var(--hairline);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  @media (min-width: 820px) { .features { grid-template-columns: 1fr 1fr; } }
+  .feat {
+    background: var(--surface);
+    padding: 40px 36px 36px;
+    display: flex; flex-direction: column; gap: 16px;
+    position: relative;
+  }
+  @media (max-width: 640px) { .feat { padding: 30px 24px; } }
+  .feat-num {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 10.5px; color: var(--ink-dim);
+    letter-spacing: 0.22em; text-transform: uppercase;
+  }
+  .feat-num b { color: var(--accent); font-weight: 500; }
+  .feat-title {
+    font-family: "Inter", "Noto Sans SC", ui-sans-serif, system-ui, sans-serif;
+    font-weight: 400; font-size: 28px;
+    line-height: 1.15; letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+  .feat-title em { font-style: normal; color: var(--accent-hi); font-weight: 700; }
+  .feat-body {
+    color: var(--ink-soft);
+    font-size: 15px; line-height: 1.6;
+    max-width: 46ch;
+  }
+  .feat-tag {
+    margin-top: auto; padding-top: 16px;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 10.5px; color: var(--ink-dim);
+    letter-spacing: 0.16em; text-transform: uppercase;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .feat-tag .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+  .feat-tag.soon { color: var(--ink-ghost); }
+  .feat-tag.soon .dot { background: var(--ink-ghost); }
+
+  /* ─────────── HOW IT WORKS ─────────── */
+  .steps {
+    display: grid; grid-template-columns: 1fr; gap: 1px;
+    background: var(--hairline);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  @media (min-width: 820px) { .steps { grid-template-columns: repeat(3, 1fr); } }
+  .step { background: var(--surface); padding: 32px 28px; }
+  .step-n {
+    font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif; font-weight: 500;
+    font-size: 48px; color: var(--accent);
+    line-height: 1; letter-spacing: -0.02em;
+    margin-bottom: 14px;
+  }
+  .step-n em { font-style: normal; }
+  .step-title {
+    font-family: "Inter", "Noto Sans SC", ui-sans-serif, system-ui, sans-serif;
+    font-weight: 400; font-size: 21px;
+    color: var(--ink); margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .step-body { color: var(--ink-soft); font-size: 14.5px; line-height: 1.6; }
+  .step-meta {
+    margin-top: 14px;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 10.5px; color: var(--ink-dim);
+    letter-spacing: 0.14em;
+  }
+
+  /* ─────────── DARK PANEL ─────────── */
+  .panel-dark {
+    background: var(--navy);
+    color: var(--navy-hi);
+    border-radius: var(--radius-xl);
+    padding: 72px 56px;
+    position: relative; overflow: hidden;
+  }
+  @media (max-width: 640px) { .panel-dark { padding: 48px 28px; border-radius: var(--radius-lg); } }
+  .panel-dark::before {
+    content: "";
+    position: absolute;
+    top: -50%; right: -20%;
+    width: 580px; height: 580px;
+    background: radial-gradient(circle, rgba(67,97,238,0.32), transparent 60%);
     pointer-events: none;
   }
-  .finale h2 {
+  .panel-dark .block-eyebrow { color: var(--accent-hi); }
+  .panel-dark .block-eyebrow::before { background: var(--accent-hi); }
+  .panel-dark .block-title { color: #fff; position: relative; }
+  .panel-dark .block-title em { color: var(--accent-hi); }
+  .panel-grid {
+    margin-top: 48px;
+    display: grid; grid-template-columns: 1fr; gap: 36px;
     position: relative;
-    font-family: "Fraunces", "Noto Serif SC", serif;
-    font-weight: 300;
-    font-size: clamp(40px, 6vw, 84px);
-    line-height: 1.05;
-    letter-spacing: -0.02em;
-    color: var(--cream);
-    max-width: 920px;
-    margin: 0 auto 32px;
   }
-  .finale h2 em { font-style: italic; color: var(--ember); font-weight: 400; }
-  .finale p { position: relative; color: var(--ink-dim); max-width: 560px; margin: 0 auto 40px; font-size: 16px; }
-  .finale .hero-ctas { opacity: 1; transition: none; justify-content: center; margin-top: 0; }
+  @media (min-width: 820px) { .panel-grid { grid-template-columns: repeat(3, 1fr); gap: 40px; } }
+  .panel-item { border-top: 1px solid rgba(232,235,255,0.1); padding-top: 22px; }
+  .panel-item-n {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 10.5px; color: var(--accent-hi);
+    letter-spacing: 0.2em; text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .panel-item-h {
+    font-family: "Inter", "Noto Sans SC", ui-sans-serif, system-ui, sans-serif;
+    font-weight: 400; font-size: 22px; line-height: 1.25;
+    color: #fff; margin-bottom: 10px; letter-spacing: -0.01em;
+  }
+  .panel-item-b { color: #A9B0C8; font-size: 14.5px; line-height: 1.6; }
 
-  /* footer */
+  /* ─────────── MANIFESTO ─────────── */
+  .manifesto {
+    padding: 80px 0;
+    border-top: 1px solid var(--hairline);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .manifesto-text {
+    max-width: 780px;
+    font-family: "Inter", "Noto Sans SC", ui-sans-serif, system-ui, sans-serif;
+    font-weight: 500;
+    font-size: clamp(22px, 2.6vw, 30px);
+    line-height: 1.45;
+    letter-spacing: -0.012em;
+    color: var(--ink);
+  }
+  .manifesto-text em { font-style: normal; color: var(--accent-hi); font-weight: 700; }
+  .manifesto-sig {
+    margin-top: 24px;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11.5px; color: var(--ink-dim);
+    letter-spacing: 0.18em; text-transform: uppercase;
+  }
+
+  /* ─────────── CTA ─────────── */
+  .cta {
+    padding: 140px 0 120px;
+    text-align: center;
+  }
+  .cta h2 {
+    font-family: "Inter", "Noto Sans SC", ui-sans-serif, system-ui, sans-serif;
+    font-weight: 500;
+    font-size: clamp(36px, 6vw, 72px);
+    line-height: 1.02;
+    letter-spacing: -0.028em;
+    color: var(--ink);
+    max-width: 18ch;
+    margin: 0 auto 22px;
+  }
+  .cta h2 em { font-style: normal; color: var(--accent-hi); font-weight: 700; }
+  .cta p {
+    color: var(--ink-soft); max-width: 56ch;
+    margin: 0 auto 36px; font-size: 17px; line-height: 1.6;
+  }
+  .cta .hero-ctas { justify-content: center; margin-top: 0; }
+
+  /* ─────────── FOOTER ─────────── */
   footer {
-    padding: 30px 40px;
-    border-top: 1px solid var(--line);
-    display: flex; justify-content: space-between;
-    font-family: "JetBrains Mono", mono;
-    font-size: 10.5px; color: var(--ink-faint); letter-spacing: 0.2em; text-transform: uppercase;
-    flex-wrap: wrap; gap: 16px;
+    border-top: 1px solid var(--hairline);
+    padding: 36px 0;
   }
-  footer a { color: var(--ink-dim); }
-  footer a:hover { color: var(--ember); }
-  footer .brand { color: var(--cream); font-family: "Fraunces", serif; font-style: italic; font-size: 14px; letter-spacing: 0; text-transform: none; }
+  .footer-inner {
+    max-width: var(--maxw); margin: 0 auto;
+    padding: 0 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px;
+    font-size: 13px; color: var(--ink-dim);
+  }
+  @media (max-width: 640px) { .footer-inner { padding: 0 20px; } }
+  .footer-inner .brand { font-size: 17px; }
+  .footer-links { display: flex; gap: 22px; flex-wrap: wrap; }
+  .footer-links a:hover { color: var(--accent); }
 
-  [data-locale="zh"] .en, [data-locale="en"] .zh { display: none; }
+  /* reveal */
+  .reveal { opacity: 0; transform: translateY(12px); transition: opacity .7s ease, transform .7s cubic-bezier(0.2,0.8,0.2,1); }
+  .reveal.on { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0s !important; transition-duration: 0s !important; }
+    .reveal { opacity: 1; transform: none; }
+  }
 </style>
 </head>
-<body data-locale="zh">
+<body data-locale="en">
 
-<!-- ── loader ── -->
-<div class="loader" id="loader">
-  <div class="loader-mark"><em>Dorado</em></div>
-  <div class="loader-line"><div id="loaderBar"></div></div>
-  <div class="loader-meta" id="loaderMeta">INITIALIZING · 000</div>
-</div>
-
-<!-- ── nav ── -->
-<nav class="nav">
-  <a href="#top" class="nav-brand"><span class="dot"></span><em>Dorado</em></a>
-  <div class="nav-links">
-    <a href="#product" data-hover><span class="zh">产品</span><span class="en">Product</span></a>
-    <a href="#bridge" data-hover><span class="zh">A2A 协议</span><span class="en">A2A Protocol</span></a>
-    <a href="#pricing" data-hover><span class="zh">定价</span><span class="en">Pricing</span></a>
-    <a href="https://github.com" data-hover>GitHub</a>
-  </div>
-  <div class="nav-right">
-    <a href="https://github.com/leosong3108/dorado" target="_blank" class="gh-stars" data-hover>
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-      <span class="s">★</span> <span>1.2k</span>
-    </a>
-    <button class="lang-btn" id="langBtn"><span class="on" id="zhLabel">中</span> / <span id="enLabel">EN</span></button>
-    <a href="mailto:hi@hidorado.com?subject=Dorado%20cloud%20alpha%20waitlist&body=Hi%2C%20I%27d%20like%20to%20join%20the%20Dorado%20cloud%20alpha." class="nav-cta" data-hover>
-      <span class="zh">开始使用 →</span>
-      <span class="en">Get started →</span>
-    </a>
+<!-- ─────────── NAV ─────────── -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#top" class="brand"><span class="mark"></span><span class="wordmark"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span></a>
+    <div class="nav-links">
+      <a href="#product"><span class="en">Product</span><span class="zh">产品</span></a>
+      <a href="#how"><span class="en">How it works</span><span class="zh">原理</span></a>
+      <a href="#why"><span class="en">Why Dorado</span><span class="zh">为什么</span></a>
+      <a href="https://github.com/leosong3108/dorado" target="_blank">GitHub</a>
+    </div>
+    <div class="nav-right">
+      <button class="lang" id="langBtn" aria-label="toggle language">
+        <span id="zhLabel">中</span> <span style="opacity:.35">/</span> <span class="on" id="enLabel">EN</span>
+      </button>
+      <a href="mailto:hi@hidorado.com?subject=Dorado%20early%20access&body=Hi%2C%20I%27d%20like%20early%20access%20to%20Dorado." class="btn btn-solid btn-mobile-hide">
+        <span class="en">Get access</span><span class="zh">拿权限</span>
+      </a>
+    </div>
   </div>
 </nav>
 
-<!-- ─────────── HERO · GALAXY ─────────── -->
-<section class="hero" id="top">
-  <canvas id="galaxy"></canvas>
+<!-- ─────────── HERO · cosmic ─────────── -->
+<header class="hero" id="top">
+  <canvas id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="hero-inner">
+      <span class="hero-eyebrow">
+        <span class="pulse"></span>
+        <span class="en">Agent-to-Agent · from day one</span>
+        <span class="zh">Agent-to-Agent · 第一天就在</span>
+      </span>
 
-  <div class="galaxy-tooltip" id="tooltip"></div>
+      <h1 class="hero-h">
+        <span class="en">Send your Agent<br>to <em>do it.</em></span>
+        <span class="zh">派你的 Agent<br><em>去办。</em></span>
+      </h1>
 
-  <div class="hero-core">
-    <h1 class="hero-wordmark" id="wm">Dor<em>a</em>do</h1>
-    <p class="hero-tagline" id="tag">
-      <span class="zh">一个你。<em>所有 Agent</em> 都认识你。</span>
-      <span class="en">One <em>you.</em> Every Agent knows you.</span>
-    </p>
-    <p class="hero-subline" id="sub">
-      <span class="zh">operating system for the agent economy</span>
-      <span class="en">operating system for the agent economy</span>
-    </p>
-    <div class="hero-ctas" id="cta">
-      <a href="mailto:hi@hidorado.com?subject=Dorado%20cloud%20alpha%20waitlist&body=Hi%2C%20I%27d%20like%20to%20join%20the%20Dorado%20cloud%20alpha." class="btn btn-primary" data-hover>
-        <span class="zh">开启云版 alpha →</span>
-        <span class="en">Enter the cloud →</span>
-      </a>
-      <a href="https://github.com" class="btn btn-ghost" data-hover>
-        <span class="zh">在 GitHub 查看</span>
-        <span class="en">View on GitHub</span>
-      </a>
-    </div>
-  </div>
+      <p class="hero-sub">
+        <span class="en">Dorado dispatches. Delegates. Handshakes with other Agents. <b>You stop typing, it starts working.</b></span>
+        <span class="zh">Dorado 会派出、会办事、会跟别人的 Agent 握手。<b>你停止敲字，它开始工作。</b></span>
+      </p>
 
-  <div class="hero-scroll" id="scrollHint">
-    <span class="zh">滚动 scroll</span>
-    <span class="en">scroll ↓</span>
-  </div>
-</section>
+      <div class="hero-ctas">
+        <a href="mailto:hi@hidorado.com?subject=Dorado%20early%20access&body=Hi%2C%20I%27d%20like%20early%20access%20to%20Dorado." class="btn btn-primary btn-lg">
+          <span class="en">Get early access →</span>
+          <span class="zh">拿早期权限 →</span>
+        </a>
+        <a href="https://github.com/leosong3108/dorado" target="_blank" class="btn btn-ghost btn-lg">
+          <span class="en">Open source on GitHub ↗</span>
+          <span class="zh">GitHub 开源 ↗</span>
+        </a>
+      </div>
 
-<!-- ── marquee of connected AI / agents ── -->
-<div class="marquee-wrap">
-  <div class="marquee">
-    <div class="item">✦ CHATGPT</div>
-    <div class="item">✦ CLAUDE</div>
-    <div class="item">✦ GEMINI</div>
-    <div class="item">✦ CURSOR</div>
-    <div class="item">✦ ALICE'S AGENT</div>
-    <div class="item">✦ BOB'S AGENT</div>
-    <div class="item">✦ DORADO BRIDGE</div>
-    <div class="item">✦ MCP-COMPATIBLE</div>
-    <!-- duplicated for seamless loop -->
-    <div class="item">✦ CHATGPT</div>
-    <div class="item">✦ CLAUDE</div>
-    <div class="item">✦ GEMINI</div>
-    <div class="item">✦ CURSOR</div>
-    <div class="item">✦ ALICE'S AGENT</div>
-    <div class="item">✦ BOB'S AGENT</div>
-    <div class="item">✦ DORADO BRIDGE</div>
-    <div class="item">✦ MCP-COMPATIBLE</div>
-  </div>
-</div>
-
-<!-- ─────────── PRODUCT · 4 FEATURES ─────────── -->
-<section class="section" id="product">
-  <div class="section-eyebrow"><span class="zh">产品 · 四个能力，一个整体</span><span class="en">Product · four capabilities, one whole</span></div>
-  <h2 class="section-head">
-    <span class="zh">你跟 AI 的<em> 一切关系</em>，<br>都被 Dorado 整合。</span>
-    <span class="en">Every way you work with AI,<em> unified.</em></span>
-  </h2>
-
-  <!-- feature 1 : memory -->
-  <div class="feature">
-    <div class="feat-text">
-      <div class="feat-label">01 / Memory</div>
-      <h3 class="feat-title zh">它 <em>记得你。</em></h3>
-      <h3 class="feat-title en">It <em>remembers</em> you.</h3>
-      <div class="feat-body">
-        <p class="zh">你跟它聊天，它从对话里抽出"你是谁"——身份、偏好、决定、项目。</p>
-        <p class="zh">下次你问任何 AI 任何问题，这些上下文提前坐在对话桌上。你不再从零开始。</p>
-        <p class="en">Chat naturally. It extracts who you are from the flow — identity, preferences, decisions, projects.</p>
-        <p class="en">Next time you ask any AI anything, that context is already in the room.</p>
+      <div class="hero-meta">
+        <span><span class="dot"></span>MIT</span>
+        <span><span class="dot"></span><span class="en">Self-host in 5 min</span><span class="zh">5 分钟自托管</span></span>
+        <span><span class="dot"></span><span class="en">Data stays on your box</span><span class="zh">数据在你机器上</span></span>
       </div>
     </div>
-    <div class="mock">
-      <div class="mock-bar"><span class="d"></span><span class="d"></span><span class="d on"></span><span class="url">dorado.app · chat</span></div>
-      <div class="mock-chat">
-        <div class="mc-side">
-          <div class="logo">◈</div>
-          <div class="item on">chat</div>
-          <div class="item">brain</div>
-          <div class="item">work</div>
+  </div>
+
+  <div class="hero-scrollhint" aria-hidden="true">
+    <span class="en">watch it operate</span>
+    <span class="zh">看它办事</span>
+  </div>
+</header>
+
+<!-- ─────────── LIVE DEMO · 4 scenes ─────────── -->
+<section class="demo-wrap">
+  <div class="wrap">
+
+    <div class="demo-head">
+      <div class="demo-tabs" role="tablist" aria-label="Watch Dorado operate">
+        <button class="tab on" data-scene="delegate" aria-selected="true">
+          <span class="tab-n">01</span>
+          <span class="tab-l"><span class="en">Delegate</span><span class="zh">Delegate</span></span>
+          <span class="tab-d"><span class="en">drive ChatGPT for you</span><span class="zh">派它跑 ChatGPT</span></span>
+        </button>
+        <button class="tab" data-scene="anywhere">
+          <span class="tab-n">02</span>
+          <span class="tab-l">@dorado Anywhere</span>
+          <span class="tab-d"><span class="en">inject into any AI</span><span class="zh">注入任意 AI</span></span>
+        </button>
+        <button class="tab" data-scene="bridge">
+          <span class="tab-n">03</span>
+          <span class="tab-l"><span class="en">A2A Bridge</span><span class="zh">A2A Bridge</span></span>
+          <span class="tab-d"><span class="en">hand signed context to other Agents</span><span class="zh">向别人 Agent 交签名上下文</span></span>
+        </button>
+        <button class="tab" data-scene="memory">
+          <span class="tab-n">04</span>
+          <span class="tab-l"><span class="en">Memory</span><span class="zh">Memory</span></span>
+          <span class="tab-d"><span class="en">the fuel: three-layer identity</span><span class="zh">燃料：三层身份</span></span>
+        </button>
+        <div class="tab-bar"><div class="tab-bar-fill" id="tabBarFill"></div></div>
+      </div>
+    </div>
+
+    <div class="demo-stage" id="demoStage" aria-live="polite">
+
+      <!-- ═════ SCENE 1 · DELEGATE ═════ -->
+      <div class="scene on" data-scene="delegate">
+        <div class="scene-chrome">
+          <div class="chrome-tl">
+            <span class="chrome-dots"><i></i><i></i><i></i></span>
+            <span class="chrome-title"><span class="en">dorado · /work/delegate</span><span class="zh">dorado · /work/delegate</span></span>
+          </div>
+          <div class="chrome-tr mono">
+            <span class="en">TASK · <span id="delStatus">running</span></span>
+            <span class="zh">任务 · <span>进行中</span></span>
+          </div>
         </div>
-        <div class="mc-main">
-          <div class="bubble u"><span class="zh">带我过一遍现在的架构</span><span class="en">walk me through the architecture</span></div>
-          <div><div class="chip">recalled · 4 memories</div>
-          <div class="bubble a"><span class="zh">基于你上周的决策 (Drizzle + pgvector) 和你讨厌过度抽象的习惯，我从 API 层讲起...</span><span class="en">based on last week's decision (Drizzle + pgvector) and your "no over-abstraction" rule, let me start from the API layer...</span></div></div>
-        </div>
-        <div class="mc-brain">
-          <h>Brain</h>
-          <g><b>identity</b>founder · NYU · CS</g>
-          <g><b>preference</b>hates over-abstraction</g>
-          <g><b>stack</b>Next.js · Drizzle</g>
-          <g><b>decided</b>using pgvector</g>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- feature 2 : anywhere -->
-  <div class="feature reverse" id="anywhere">
-    <div class="feat-text">
-      <div class="feat-label">02 / @dorado Anywhere</div>
-      <h3 class="feat-title zh">它在 ChatGPT 里 <em>替你说话。</em></h3>
-      <h3 class="feat-title en">It <em>speaks for you</em> inside ChatGPT.</h3>
-      <div class="feat-body">
-        <p class="zh">装个浏览器扩展。在任何 AI 工具的输入框里打 <b>@dorado</b>，你的身份胶囊自动塞进对话。</p>
-        <p class="zh">泛泛而谈的回答一秒变成带着"你"的回答。</p>
-        <p class="en">Install the extension. Type <b>@dorado</b> in any AI composer. Your identity capsule gets injected automatically.</p>
-        <p class="en">Generic answers become grounded answers. Instantly.</p>
-      </div>
-    </div>
-    <div class="mock">
-      <div class="mock-bar"><span class="d"></span><span class="d"></span><span class="d on"></span><span class="url">chatgpt.com</span></div>
-      <div class="mock-composer">
-        <div class="url">› composer · with dorado anywhere installed</div>
-        <div class="ta"><span class="at">@dorado</span> <span class="zh">帮我设计一个 API 错误处理策略</span><span class="en">help me design an API error handling strategy</span></div>
-        <div class="flash">⟶ capsule injected · 312 tokens</div>
-        <div class="rows">
-          <div><span class="ok">✓</span>identity · founder, Next.js, 讨厌过度抽象</div>
-          <div><span class="ok">✓</span>project · Dorado · MVP 阶段</div>
-          <div><span class="ok">✓</span>4 relevant past episodes</div>
-        </div>
-      </div>
-    </div>
-  </div>
+        <div class="scene-body delegate-body">
+          <div class="del-left">
+            <div class="del-card">
+              <div class="del-label mono"><span class="en">GOAL</span><span class="zh">目标</span></div>
+              <div class="del-goal serif">
+                <span class="en">"Write a 300-word investor memo about our pricing model — sharp voice, no hedging."</span>
+                <span class="zh">"写一篇 300 字的投资人 memo 解释我们的定价模型——语气要硬，不要打太极。"</span>
+              </div>
+              <div class="del-meta mono">
+                <span><i class="dot"></i><span class="en">via chatgpt</span><span class="zh">via chatgpt</span></span>
+                <span><i class="dot"></i><span id="delTurn">turn 1 / 5</span></span>
+                <span><i class="dot"></i>12:04</span>
+              </div>
+              <div class="del-progress"><div class="del-progress-fill" id="delFill"></div></div>
 
-  <!-- feature 3 : delegate -->
-  <div class="feature" id="delegate">
-    <div class="feat-text">
-      <div class="feat-label">03 / Delegate</div>
-      <h3 class="feat-title zh">它 <em>替你干活</em>，再替你审稿。</h3>
-      <h3 class="feat-title en">It <em>does the work</em> and checks it.</h3>
-      <div class="feat-body">
-        <p class="zh">扔一个目标给它："写一篇 300 字关于定价的 memo"。Dorado 在后台打开 ChatGPT，自动跑 5 轮完成。</p>
-        <p class="zh">然后——这是 Dorado 跟别家的区别——它会用你的语气审一遍输出，跟你反馈"这段不像你会说的话"。你只要说"批准"或"打回"。</p>
-        <p class="en">Hand it a goal: "write a 300-word memo on pricing." Dorado drives ChatGPT through 5 turns in the background.</p>
-        <p class="en">Then — this is the part nobody else does — it reviews the output in your voice.</p>
-      </div>
-    </div>
-    <div class="mock">
-      <div class="mock-bar"><span class="d"></span><span class="d"></span><span class="d on"></span><span class="url">dorado.app · delegate</span></div>
-      <div class="mock-delegate">
-        <div class="task">
-          <div class="lab">· TASK · RUNNING ·</div>
-          <div class="goal"><span class="zh">把定价模型写成说服投资人的 300 字 memo</span><span class="en">turn the pricing model into a 300-word investor memo</span></div>
-          <div class="meta"><span>CREATED 12:04</span><span>TURN 3 / 5</span><span>VIA CHATGPT</span></div>
-          <div class="bar"></div>
-          <div class="rev">
-            <b>DORADO'S REVIEW</b>
-            <span class="zh">「语气太软，不像你。你一向是"这就是理由、不接受讨论"的风格。第二段可以更硬。其他部分 OK。」</span>
-            <span class="en">"Voice is too soft. You usually go 'that's the reason, discussion closed.' Paragraph 2 needs sharper edges."</span>
+              <div class="del-review" id="delReview" style="display:none;">
+                <div class="del-review-k mono">
+                  <span class="en">dorado's review · in your voice</span>
+                  <span class="zh">dorado 的审稿 · 用你的语气</span>
+                </div>
+                <div class="del-review-t serif">
+                  <span class="en">"Voice is too soft. Paragraph 2 needs sharper edges — you usually close with 'that's the reason, not up for discussion.'"</span>
+                  <span class="zh">"语气太软。第二段得更硬——你一贯是'这就是理由、没什么好讨论'的调子。"</span>
+                </div>
+                <div class="del-review-act">
+                  <button class="btn-mini ok">✓ <span class="en">approve</span><span class="zh">通过</span></button>
+                  <button class="btn-mini"><span class="en">send back</span><span class="zh">打回</span></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="del-right">
+            <div class="drv-head mono">
+              <span class="en">CHATGPT DRIVER · background</span>
+              <span class="zh">CHATGPT 驱动 · 后台</span>
+            </div>
+            <div class="drv-feed" id="drvFeed"></div>
           </div>
         </div>
       </div>
+
+      <!-- ═════ SCENE 2 · @ANYWHERE ═════ -->
+      <div class="scene" data-scene="anywhere">
+        <div class="scene-chrome scene-chrome-fake">
+          <div class="chrome-tl">
+            <span class="chrome-dots"><i></i><i></i><i></i></span>
+            <span class="chrome-title">chatgpt.com</span>
+          </div>
+          <div class="chrome-tr mono">
+            <span class="en">+ dorado extension</span>
+            <span class="zh">+ dorado 扩展</span>
+          </div>
+        </div>
+
+        <div class="scene-body any-body">
+          <div class="any-composer">
+            <div class="any-avatar">◎</div>
+            <div class="any-ta" id="anyTA">
+              <span id="anyText"></span><span class="caret" id="anyCaret"></span>
+            </div>
+            <div class="any-send">↑</div>
+          </div>
+
+          <div class="any-capsule" id="anyCapsule">
+            <div class="any-capsule-k mono">
+              <span class="pulse"></span>
+              <span class="en">dorado capsule injected · <b>312 tokens</b></span>
+              <span class="zh">dorado 胶囊已注入 · <b>312 tokens</b></span>
+            </div>
+            <div class="any-capsule-tags">
+              <span>identity · founder</span>
+              <span>stack · Next.js · Drizzle</span>
+              <span>style · no over-abstraction</span>
+              <span>+ 4 episodes</span>
+            </div>
+          </div>
+
+          <div class="any-response" id="anyResponse">
+            <div class="any-response-h mono"><span class="en">CHATGPT · with your context</span><span class="zh">CHATGPT · 带着你的上下文</span></div>
+            <div class="any-response-t" id="anyStream"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═════ SCENE 3 · A2A BRIDGE ═════ -->
+      <div class="scene" data-scene="bridge">
+        <div class="scene-chrome">
+          <div class="chrome-tl">
+            <span class="chrome-dots"><i></i><i></i><i></i></span>
+            <span class="chrome-title"><span class="en">dorado · /work/bridge</span><span class="zh">dorado · /work/bridge</span></span>
+          </div>
+          <div class="chrome-tr mono">
+            <span class="en">A2A · <span id="brgState">issuing</span></span>
+            <span class="zh">A2A · <span>签发中</span></span>
+          </div>
+        </div>
+
+        <div class="scene-body bridge-body">
+          <div class="brg-side brg-left">
+            <div class="brg-side-k mono">
+              <span class="en">YOUR DORADO · issues →</span>
+              <span class="zh">你的 DORADO · 签发 →</span>
+            </div>
+            <div class="brg-form">
+              <div class="brg-row"><span class="k">to</span><span class="v" id="brgTo">alice@dorado</span></div>
+              <div class="brg-row"><span class="k">scope</span><span class="v" id="brgScope">project · PLM-architecture</span></div>
+              <div class="brg-row"><span class="k">ttl</span><span class="v accent" id="brgTtl">1 hour</span></div>
+              <div class="brg-row"><span class="k">capability</span><span class="v" id="brgCap">memory-snapshot · read</span></div>
+              <div class="brg-row"><span class="k">signature</span><span class="v sig" id="brgSig">—</span></div>
+            </div>
+            <button class="btn-mini primary" id="brgSignBtn">
+              <span class="en">sign &amp; send →</span>
+              <span class="zh">签名并发送 →</span>
+            </button>
+          </div>
+
+          <div class="brg-wire" aria-hidden="true">
+            <svg viewBox="0 0 200 40" preserveAspectRatio="none">
+              <line x1="0" y1="20" x2="200" y2="20" stroke="rgba(67,97,238,0.25)" stroke-width="1" stroke-dasharray="2,3"/>
+            </svg>
+            <div class="brg-packet" id="brgPacket">✦</div>
+          </div>
+
+          <div class="brg-side brg-right">
+            <div class="brg-side-k mono">
+              <span class="en">ALICE'S DORADO · receives ←</span>
+              <span class="zh">ALICE 的 DORADO · 收到 ←</span>
+            </div>
+            <div class="brg-receive" id="brgReceive">
+              <div class="brg-empty" id="brgEmpty"><span class="en">waiting for bundle…</span><span class="zh">等待 bundle 中…</span></div>
+              <div class="brg-received" id="brgReceived" style="display:none;">
+                <div class="brg-row"><span class="k mono">bundle</span><span class="v">from leo@dorado</span></div>
+                <div class="brg-row"><span class="k mono">verify</span><span class="v"><span id="brgVerify" class="stream">checking…</span></span></div>
+                <div class="brg-row"><span class="k mono">loaded</span><span class="v" id="brgLoaded">—</span></div>
+                <div class="brg-countdown mono" id="brgCountdown">expires in 59:58</div>
+                <div class="brg-revoke">
+                  <button class="btn-mini" id="brgRevoke"><span class="en">revoke now</span><span class="zh">立即吊销</span></button>
+                  <span class="mono brg-audit"><span class="en">auditable · logged</span><span class="zh">可审计 · 已记录</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═════ SCENE 4 · MEMORY ═════ -->
+      <div class="scene" data-scene="memory">
+        <div class="scene-chrome">
+          <div class="chrome-tl">
+            <span class="chrome-dots"><i></i><i></i><i></i></span>
+            <span class="chrome-title"><span class="en">dorado · /chat</span><span class="zh">dorado · /chat</span></span>
+          </div>
+          <div class="chrome-tr mono">
+            <span class="en">MEMORY · <span id="memStatus">idle</span></span>
+            <span class="zh">记忆 · <span>待命</span></span>
+          </div>
+        </div>
+
+        <div class="scene-body memory-body">
+          <div class="mem-main">
+            <div class="mem-topbar mono">
+              <span><span class="en">thread:</span><span class="zh">会话:</span></span>
+              <b>Dorado MVP / API architecture</b>
+            </div>
+            <div class="mem-scroll" id="memScroll">
+              <div class="bubble user" id="b-user">
+                <span id="userText"></span><span class="caret" id="userCaret"></span>
+              </div>
+              <div class="bubble assistant" id="b-ai" style="display:none;">
+                <div class="recall-chip"><span class="en">recalled · 4 memories</span><span class="zh">调出 · 4 条记忆</span></div>
+                <div id="aiText"></div>
+              </div>
+            </div>
+            <div class="mem-composer">
+              <div class="box">
+                <span class="ph"><span class="en">ask anything…</span><span class="zh">聊聊看…</span></span>
+                <span class="send">↑</span>
+              </div>
+            </div>
+          </div>
+
+          <aside class="mem-brain">
+            <h4><span class="blink"></span><span class="en">Brain</span><span class="zh">记忆</span></h4>
+            <div class="scope mono"><span class="en">scope: <b>Dorado MVP</b></span><span class="zh">范围: <b>Dorado MVP</b></span></div>
+            <div class="fact-list" id="factList">
+              <div class="fact"><div class="k">L1 · identity</div><div class="v"><span class="en">founder · NYU · CS</span><span class="zh">创始人 · NYU · CS</span></div></div>
+              <div class="fact"><div class="k">L1 · stack</div><div class="v">Next.js · Drizzle · pgvector</div></div>
+              <div class="fact"><div class="k">L2 · project</div><div class="v"><span class="en">Dorado MVP · API phase</span><span class="zh">Dorado MVP · API 阶段</span></div></div>
+              <div class="fact"><div class="k">L3 · episode · 5d</div><div class="v"><span class="en">chose pgvector, no abstractions</span><span class="zh">定 pgvector，不抽象</span></div></div>
+            </div>
+            <div class="foot mono">
+              <span>L1 · L2 · L3</span>
+              <span><b id="factCount">0</b>/4</span>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="demo-foot mono">
+      <span>
+        <span class="en">Everything you see here runs in the product today — clone it from</span>
+        <span class="zh">这里所有场景都是产品里能跑的真功能——GitHub clone 就能自己试</span>
+        <a href="https://github.com/leosong3108/dorado" target="_blank" class="demo-gh">github.com/leosong3108/dorado ↗</a>
+      </span>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────── TRUST ─────────── -->
+<div class="wrap">
+  <div class="trust">
+    <div class="trust-label">
+      <span class="en"><b>WORKS WITH</b> — the AIs you already use</span>
+      <span class="zh"><b>已支持</b> — 你正在用的那些 AI</span>
+    </div>
+    <div class="trust-items">
+      <span><span class="dot"></span>CHATGPT</span>
+      <span><span class="dot"></span>CLAUDE</span>
+      <span><span class="dot"></span>DEEPSEEK</span>
+      <span><span class="dot"></span>CURSOR</span>
+      <span><span class="dot"></span>CLAUDE CODE</span>
+      <span><span class="dot"></span>WINDSURF</span>
     </div>
   </div>
+</div>
 
-  <!-- feature 4 : bridge -->
-  <div class="feature reverse" id="bridge">
-    <div class="feat-text">
-      <div class="feat-label">04 / A2A Bridge</div>
-      <h3 class="feat-title zh">它跟别人的 Agent <em>握手。</em></h3>
-      <h3 class="feat-title en">It <em>shakes hands</em> with other Agents.</h3>
-      <div class="feat-body">
-        <p class="zh">Alice 的 Agent 要跟你合作。你签发一个 bundle——把你身份的一部分（比如这个项目的上下文）时限 1 小时授权给她。</p>
-        <p class="zh">她的 Dorado 收到、验签、临时装载。1 小时后过期，或你点"撤销"立刻失效。</p>
-        <p class="zh"><b>这是 Agent-to-Agent 经济的底层协议。</b></p>
-        <p class="en">Alice's Agent wants to collaborate. Issue a bundle — a signed, time-boxed slice of your identity, authorized for one hour.</p>
-        <p class="en">Her Dorado receives it, verifies, loads it temporarily. Expires or revoked the moment you say so.</p>
-        <p class="en"><b>This is the protocol for the Agent economy.</b></p>
+<!-- ─────────── PRODUCT ─────────── -->
+<section class="block" id="product">
+  <div class="wrap">
+    <div class="block-head reveal">
+      <div class="block-eyebrow"><span class="en">Product</span><span class="zh">产品</span></div>
+      <h2 class="block-title">
+        <span class="en">An Agent that <em>acts</em>.<br>Not a chatbox.</span>
+        <span class="zh">一个 <em>会办事</em> 的 Agent。<br>不是又一个聊天框。</span>
+      </h2>
+      <p class="block-lede">
+        <span class="en">A delegate that drives ChatGPT for you. A protocol to hand signed context to other people's Agents. An injector that makes every AI know you. And the living memory that powers all of it. Same Dorado.</span>
+        <span class="zh">一个能替你驱动 ChatGPT 的代理。一套可以向别人 Agent 交出签名上下文的协议。一个让每个 AI 都认识你的注入器。加上支撑这一切的活记忆。同一个 Dorado。</span>
+      </p>
+    </div>
+
+    <div class="features">
+      <article class="feat reveal">
+        <div class="feat-num"><b>01</b> · Delegate</div>
+        <h3 class="feat-title">
+          <span class="en">Dispatch it. It <em>does the work</em>.</span>
+          <span class="zh">派它出去。它 <em>把事办了</em>。</span>
+        </h3>
+        <p class="feat-body">
+          <span class="en">Hand Dorado a goal. It drives a ChatGPT session in the background — turn by turn, pushing back on hedging, steering voice — then reviews the final output against how you actually sound. You only see what's worth seeing.</span>
+          <span class="zh">丢给 Dorado 一个目标。它在后台驱动一场 ChatGPT 对话——一轮一轮地问、怼回软话、把语气拉硬——然后用你自己的语气把最终稿审一遍。你只看值得看的。</span>
+        </p>
+        <div class="feat-tag"><span class="dot"></span><span class="en">shipped · /work/delegate</span><span class="zh">已上线 · /work/delegate</span></div>
+      </article>
+
+      <article class="feat reveal">
+        <div class="feat-num"><b>02</b> · A2A Bridge</div>
+        <h3 class="feat-title">
+          <span class="en">It <em>handshakes</em> with other Agents.</span>
+          <span class="zh">它跟别人的 Agent <em>握手</em>。</span>
+        </h3>
+        <p class="feat-body">
+          <span class="en">Issue a signed bundle to someone else's Dorado — a scoped, time-boxed slice of your identity. HMAC-SHA256, scoped capability, TTL, auditable revoke. The protocol Agent-to-Agent actually needs. This is Dorado's bet on the future.</span>
+          <span class="zh">向别人的 Dorado 签发一个 bundle——身份的一个子集，HMAC-SHA256 签名、范围明确、有时限、可审计吊销。Agent-to-Agent 经济真正需要的协议。这是 Dorado 赌的未来。</span>
+        </p>
+        <div class="feat-tag"><span class="dot"></span><span class="en">shipped · /work/bridge</span><span class="zh">已上线 · /work/bridge</span></div>
+      </article>
+
+      <article class="feat reveal">
+        <div class="feat-num"><b>03</b> · @dorado Anywhere</div>
+        <h3 class="feat-title">
+          <span class="en">You <em>bring it</em> to every AI.</span>
+          <span class="zh">把它 <em>带进</em> 每一个 AI。</span>
+        </h3>
+        <p class="feat-body">
+          <span class="en">The browser extension. Type @dorado in any composer — ChatGPT today, Claude and Cursor next — and a ~300-token identity capsule injects automatically. Generic answers become grounded ones. No copy-paste, no setup per tool.</span>
+          <span class="zh">浏览器扩展。在任何输入框里打 @dorado——先 ChatGPT，下一步 Claude 和 Cursor——~300 token 的身份胶囊自动注入。泛泛而谈的回答瞬间变成懂你的回答。不用复制粘贴，每个工具都直接生效。</span>
+        </p>
+        <div class="feat-tag"><span class="dot"></span><span class="en">extension · ChatGPT live</span><span class="zh">扩展 · ChatGPT 已上</span></div>
+      </article>
+
+      <article class="feat reveal">
+        <div class="feat-num"><b>04</b> · Living Memory</div>
+        <h3 class="feat-title">
+          <span class="en">The <em>fuel</em> for all of the above.</span>
+          <span class="zh">以上一切的 <em>燃料</em>。</span>
+        </h3>
+        <p class="feat-body">
+          <span class="en">Three-layer memory, extracted from how you chat — L1 structured facts, L2 project context, L3 pgvector episodic recall (BGE-M3 embeddings). Every Delegate task, every @dorado capsule, every bundle you sign is built from this. Memory isn't the product — it's what makes an Agent actually you.</span>
+          <span class="zh">三层记忆，从你聊天的方式里抽出来——L1 结构化事实、L2 项目上下文、L3 pgvector 语义召回（BGE-M3 向量）。每一个 Delegate 任务、每一个 @dorado 胶囊、每一个签发的 bundle，都从这里取料。记忆不是产品——是让 Agent 真的像"你"的那个东西。</span>
+        </p>
+        <div class="feat-tag"><span class="dot"></span><span class="en">shipped · visible in /chat</span><span class="zh">已上线 · /chat 里可见</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── MANIFESTO ─────────── -->
+<section class="manifesto">
+  <div class="wrap">
+    <p class="manifesto-text reveal">
+      <span class="en">The last decade was humans typing at bots. The next one is Agents negotiating with Agents — on your behalf, about your projects, with people you haven't even met yet. <em>A chatbox isn't enough. Memory alone isn't enough.</em> You need an Agent that goes, does, and comes back.</span>
+      <span class="zh">过去十年是人给机器人打字。下一个十年，是 Agent 跟 Agent 协商——代表你、围绕你的项目、甚至跟你还没见过的人。<em>一个聊天框不够，只有记忆也不够。</em>你需要一个会去、会办、会回来复命的 Agent。</span>
+    </p>
+    <div class="manifesto-sig">
+      <span class="en">— Why Dorado exists</span>
+      <span class="zh">— Dorado 为什么存在</span>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── HOW IT WORKS ─────────── -->
+<section class="block" id="how">
+  <div class="wrap">
+    <div class="block-head reveal">
+      <div class="block-eyebrow"><span class="en">How it works</span><span class="zh">原理</span></div>
+      <h2 class="block-title">
+        <span class="en">Three layers of memory,<br><em>loaded every turn.</em></span>
+        <span class="zh">三层记忆，<br><em>每次对话前都装进去。</em></span>
+      </h2>
+    </div>
+
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-n"><em>01</em></div>
+        <div class="step-title"><span class="en">Structured facts</span><span class="zh">结构化事实</span></div>
+        <p class="step-body">
+          <span class="en">Identity, stack, preferences, constraints. Sentence-level truth — explicit fields you can browse and edit.</span>
+          <span class="zh">身份、技术栈、偏好、约束。一句话级的事实——可以浏览、可以编辑。</span>
+        </p>
+        <div class="step-meta">L1 · facts table</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-n"><em>02</em></div>
+        <div class="step-title"><span class="en">Project context</span><span class="zh">项目上下文</span></div>
+        <p class="step-body">
+          <span class="en">What you're building, where you are, what you decided. Namespaced per project, auto-tracked from conversation.</span>
+          <span class="zh">你在做什么、进到哪了、决定过什么。每个项目独立命名空间，从对话中自动追踪。</span>
+        </p>
+        <div class="step-meta">L2 · projects + decisions</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-n"><em>03</em></div>
+        <div class="step-title"><span class="en">Episodic memory</span><span class="zh">语义记忆</span></div>
+        <p class="step-body">
+          <span class="en">pgvector HNSW + BGE-M3 embeddings. Relevant past episodes recalled by meaning, not keyword — injected as the context gets heavy.</span>
+          <span class="zh">pgvector HNSW + BGE-M3 向量。按语义调出相关对话片段——上下文重了就靠它。</span>
+        </p>
+        <div class="step-meta">L3 · pgvector · BGE-M3</div>
       </div>
     </div>
-    <div class="mock">
-      <div class="mock-bar"><span class="d"></span><span class="d"></span><span class="d on"></span><span class="url">dorado.app · bridge</span></div>
-      <div class="mock-bridge">
-        <div class="cap">
-          <div class="heading"><em>issue bundle →</em></div>
-          <div class="row"><span class="k">to</span><span class="v">alice@dorado</span></div>
-          <div class="row"><span class="k">scope</span><span class="v">project · PLM-architecture</span></div>
-          <div class="row"><span class="k">ttl</span><span class="v">1 hour</span></div>
-          <div class="row"><span class="k">capability</span><span class="v">memory-snapshot</span></div>
-          <div class="row"><span class="k">signature</span><span class="v sig">hmac-sha256 · 9f3a…c7b2</span></div>
-          <a class="act" data-hover>→ sign &amp; send</a>
+  </div>
+</section>
+
+<!-- ─────────── WHY ─────────── -->
+<section class="block" id="why" style="padding-top: 40px;">
+  <div class="wrap">
+    <div class="panel-dark reveal">
+      <div class="block-eyebrow"><span class="en">Why Dorado</span><span class="zh">为什么是 Dorado</span></div>
+      <h2 class="block-title">
+        <span class="en">Models change.<br><em>Your memory is yours.</em></span>
+        <span class="zh">模型会换。<br><em>记忆永远是你的。</em></span>
+      </h2>
+
+      <div class="panel-grid">
+        <div class="panel-item">
+          <div class="panel-item-n">01 / Open</div>
+          <h4 class="panel-item-h"><span class="en">Open source. No lock-in.</span><span class="zh">开源，不锁定。</span></h4>
+          <p class="panel-item-b">
+            <span class="en">MIT-licensed. Code, schema, memory export — all yours. Walk away anytime, nothing held hostage.</span>
+            <span class="zh">MIT 协议。代码、数据结构、记忆导出——全都在你手里。要走就走，不留质押。</span>
+          </p>
+        </div>
+        <div class="panel-item">
+          <div class="panel-item-n">02 / Local</div>
+          <h4 class="panel-item-h"><span class="en">Your data stays home.</span><span class="zh">数据在你机器上。</span></h4>
+          <p class="panel-item-b">
+            <span class="en">Self-host in five minutes. Docker + Postgres + pgvector. API keys never leave your box.</span>
+            <span class="zh">5 分钟自托管。Docker + Postgres + pgvector。API key 不出你的电脑。</span>
+          </p>
+        </div>
+        <div class="panel-item">
+          <div class="panel-item-n">03 / Protocol</div>
+          <h4 class="panel-item-h"><span class="en">Built for the Agent economy.</span><span class="zh">为 Agent 经济而造。</span></h4>
+          <p class="panel-item-b">
+            <span class="en">The Bridge protocol lets context flow between people's Agents — signed, scoped, revocable, auditable.</span>
+            <span class="zh">Bridge 协议让上下文在人与人的 Agent 之间安全流动——可签名、有范围、可吊销、可审计。</span>
+          </p>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ─────────── STATS BAND ─────────── -->
-<div class="stats">
-  <div class="stat">
-    <div class="stat-num"><em>3</em> / layers</div>
-    <div class="stat-label"><span class="zh">结构化 · 项目 · 语义</span><span class="en">facts · project · episodic</span></div>
-  </div>
-  <div class="stat">
-    <div class="stat-num">~<em>300</em> tkn</div>
-    <div class="stat-label"><span class="zh">每次注入的身份胶囊</span><span class="en">identity capsule · per inject</span></div>
-  </div>
-  <div class="stat">
-    <div class="stat-num"><em>5</em> min</div>
-    <div class="stat-label"><span class="zh">自托管启动时间</span><span class="en">self-host boot time</span></div>
-  </div>
-  <div class="stat">
-    <div class="stat-num"><em>MIT</em></div>
-    <div class="stat-label"><span class="zh">开源协议 · 你的数据</span><span class="en">open source · your data</span></div>
-  </div>
-</div>
-
-<!-- ─────────── FINALE ─────────── -->
-<section class="finale" id="start">
-  <h2>
-    <span class="zh">一个 Dorado，<br>装下你的 <em>Agent 经济。</em></span>
-    <span class="en">One Dorado.<br>Your <em>Agent economy</em> in one place.</span>
-  </h2>
-  <p>
-    <span class="zh">开源 · 可自托管 · 数据永远在你的机器上。云版 alpha 开放中——早鸟用户免费。</span>
-    <span class="en">Open source · self-hostable · your data never leaves your box. Cloud alpha open — free for early users.</span>
-  </p>
-  <div class="hero-ctas">
-    <a href="mailto:hi@hidorado.com?subject=Dorado%20cloud%20alpha%20waitlist&body=Hi%2C%20I%27d%20like%20to%20join%20the%20Dorado%20cloud%20alpha." class="btn btn-primary" data-hover>
-      <span class="zh">⟶ 加入云版 alpha</span>
-      <span class="en">⟶ Join cloud alpha</span>
-    </a>
-    <a href="https://github.com" class="btn btn-ghost" data-hover>
-      <span class="zh">在 GitHub 看源码</span>
-      <span class="en">Source on GitHub</span>
-    </a>
+<!-- ─────────── CTA ─────────── -->
+<section class="cta" id="start">
+  <div class="wrap">
+    <h2 class="reveal">
+      <span class="en">One Dorado.<br>Your <em>Agent economy</em>, in one place.</span>
+      <span class="zh">一个 Dorado。<br>装下你的 <em>Agent 经济</em>。</span>
+    </h2>
+    <p class="reveal">
+      <span class="en">Free for early users. Or clone it from GitHub and run it on your own machine in five minutes.</span>
+      <span class="zh">早期用户免费。也可以 GitHub clone 一份，5 分钟跑在自己机器上。</span>
+    </p>
+    <div class="hero-ctas reveal">
+      <a href="mailto:hi@hidorado.com?subject=Dorado%20early%20access&body=Hi%2C%20I%27d%20like%20early%20access%20to%20Dorado." class="btn btn-primary btn-lg">
+        <span class="en">Get early access →</span>
+        <span class="zh">拿早期权限 →</span>
+      </a>
+      <a href="https://github.com/leosong3108/dorado" target="_blank" class="btn btn-ghost btn-lg">
+        <span class="en">Open source on GitHub ↗</span>
+        <span class="zh">GitHub 开源 ↗</span>
+      </a>
+    </div>
   </div>
 </section>
 
 <footer>
-  <div><span class="brand">Dorado</span> &nbsp;·&nbsp; HIDORADO.COM &nbsp;·&nbsp; © 2026</div>
-  <div>
-    <a href="#">GITHUB</a> &nbsp;·&nbsp; <a href="#">DOCS</a> &nbsp;·&nbsp; <a href="mailto:hi@hidorado.com">HI@HIDORADO.COM</a>
+  <div class="footer-inner">
+    <a href="#top" class="brand"><span class="mark"></span><span class="wordmark"><span class="bk">Do</span><span class="md">ra</span><span class="bk">Do</span></span></a>
+    <div class="footer-links">
+      <a href="https://github.com/leosong3108/dorado" target="_blank">GitHub</a>
+      <a href="mailto:hi@hidorado.com">hi@hidorado.com</a>
+      <span>© 2026 Hidorado</span>
+    </div>
   </div>
 </footer>
 
 <script>
-  // ─────────── LOADER ───────────
-  const loader = document.getElementById('loader');
-  const bar = document.getElementById('loaderBar');
-  const meta = document.getElementById('loaderMeta');
-  let p = 0;
-  const bootLabels = ['INITIALIZING', 'LINKING AGENTS', 'CALIBRATING', 'READY'];
-  const tick = () => {
-    p += Math.random() * 9 + 3;
-    if (p > 100) p = 100;
-    bar.style.width = p + '%';
-    const lab = p < 30 ? bootLabels[0] : p < 60 ? bootLabels[1] : p < 95 ? bootLabels[2] : bootLabels[3];
-    meta.textContent = lab + ' · ' + String(Math.floor(p)).padStart(3, '0');
-    if (p < 100) setTimeout(tick, 35 + Math.random() * 60);
-    else setTimeout(reveal, 320);
-  };
-  setTimeout(tick, 180);
-  function reveal() {
-    loader.classList.add('done');
-    setTimeout(() => {
-      ['wm','tag','sub','cta','scrollHint'].forEach(id => document.getElementById(id).classList.add('reveal'));
-    }, 120);
-  }
+  // ─── HERO · cosmic canvas (A2A constellation) ───
+  (() => {
+    const cv = document.getElementById('heroCanvas');
+    if (!cv) return;
+    const ctx = cv.getContext('2d');
+    const DPR = Math.min(window.devicePixelRatio || 1, 2);
+    let W, H, CX, CY;
+    const resize = () => {
+      const r = cv.getBoundingClientRect();
+      W = r.width; H = r.height;
+      cv.width = W * DPR; cv.height = H * DPR;
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      CX = W / 2; CY = H / 2;
+    };
+    resize();
+    window.addEventListener('resize', resize);
 
-  // ─────────── LANG ───────────
+    // starfield (ambient, parallax)
+    const STARS = 260;
+    const stars = [];
+    for (let i = 0; i < STARS; i++) {
+      stars.push({
+        x: Math.random(), y: Math.random(),
+        r: Math.pow(Math.random(), 3) * 1.3 + 0.2,
+        a: 0.3 + Math.random() * 0.6,
+        tw: Math.random() * Math.PI * 2,
+        ts: 0.4 + Math.random() * 1.3,
+        depth: Math.random(),
+        hue: Math.random() > 0.88 ? 'a' : 'w', // a = accent tint, w = white
+      });
+    }
+
+    // orbital nodes — agents and other Dorados in the A2A network
+    // orbit: elliptical around center, rotating slowly
+    const nodes = [
+      { label: 'chatgpt', ringR: 0.22, phase: 0.3,  kind: 'ai', speed: 0.05 },
+      { label: 'claude',  ringR: 0.32, phase: 1.7,  kind: 'ai', speed: 0.04 },
+      { label: 'cursor',  ringR: 0.26, phase: 2.9,  kind: 'ai', speed: 0.06 },
+      { label: "alice",   ringR: 0.40, phase: 4.1,  kind: 'dorado', speed: 0.03 },
+      { label: "bob",     ringR: 0.36, phase: 5.2,  kind: 'dorado', speed: 0.035 },
+    ];
+
+    // packets — bursts of light traveling between center↔node or node↔node
+    const packets = [];
+    const queuePacket = (fromIdx, toIdx) => {
+      packets.push({
+        from: fromIdx, to: toIdx,
+        t: 0, life: 1.2 + Math.random() * 0.5, // seconds
+      });
+    };
+    // schedule random packets
+    let lastPacket = 0;
+    const pickPacket = (now) => {
+      if (now - lastPacket < 1100 + Math.random() * 1400) return;
+      lastPacket = now;
+      // either center→node or node→node
+      if (Math.random() < 0.55) {
+        queuePacket(-1, Math.floor(Math.random() * nodes.length));
+      } else {
+        const a = Math.floor(Math.random() * nodes.length);
+        let b; do { b = Math.floor(Math.random() * nodes.length); } while (b === a);
+        queuePacket(a, b);
+      }
+    };
+
+    const mouse = { nx: 0, ny: 0, active: false };
+    window.addEventListener('mousemove', (e) => {
+      mouse.nx = (e.clientX / window.innerWidth - 0.5);
+      mouse.ny = (e.clientY / window.innerHeight - 0.5);
+      mouse.active = true;
+    });
+    let tiltX = 0, tiltY = 0;
+
+    // reduced motion — render static
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const getNodePos = (n, t) => {
+      const theta = n.phase + t * n.speed;
+      const R = Math.min(W, H) * (0.45 + n.ringR);
+      const x = CX + Math.cos(theta) * R * 0.52 * (1 - tiltX * 0.04);
+      const y = CY + Math.sin(theta) * R * 0.22 * (1 + tiltY * 0.08);
+      return { x, y, theta };
+    };
+
+    let last = 0;
+    const frame = (now) => {
+      const t = now * 0.001;
+      const dt = Math.min(0.06, (now - last) / 1000); last = now;
+
+      tiltX += ((mouse.active ? mouse.nx : 0) - tiltX) * 0.05;
+      tiltY += ((mouse.active ? mouse.ny : 0) - tiltY) * 0.05;
+
+      ctx.clearRect(0, 0, W, H);
+
+      // deep-field haze
+      const haze = ctx.createRadialGradient(CX, CY, 0, CX, CY, Math.max(W, H) * 0.6);
+      haze.addColorStop(0, 'rgba(67,97,238,0.12)');
+      haze.addColorStop(0.35, 'rgba(116,143,252,0.05)');
+      haze.addColorStop(1, 'rgba(5,7,15,0)');
+      ctx.fillStyle = haze;
+      ctx.fillRect(0, 0, W, H);
+
+      // stars (twinkle)
+      for (let i = 0; i < stars.length; i++) {
+        const s = stars[i];
+        const px = s.x * W + tiltX * 10 * (1 - s.depth);
+        const py = s.y * H + tiltY * 16 * (1 - s.depth);
+        const twink = 0.45 + Math.sin(t * s.ts + s.tw) * 0.55;
+        const alpha = s.a * twink;
+        ctx.beginPath();
+        ctx.arc(px, py, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = s.hue === 'a'
+          ? `rgba(116,143,252,${alpha})`
+          : `rgba(242,244,255,${alpha})`;
+        ctx.fill();
+      }
+
+      // orbital rings — very faint
+      ctx.save();
+      ctx.translate(CX, CY);
+      ctx.scale(1, 0.42);
+      for (let i = 0; i < 3; i++) {
+        const rr = Math.min(W, H) * (0.45 + 0.08 + i * 0.1);
+        ctx.beginPath();
+        ctx.arc(0, 0, rr, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(116,143,252,${0.05 - i * 0.012})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // compute node positions
+      const pos = nodes.map(n => getNodePos(n, reduce ? 0 : t));
+
+      // connections (center ↔ nodes)
+      for (let i = 0; i < pos.length; i++) {
+        const p = pos[i];
+        const grad = ctx.createLinearGradient(CX, CY, p.x, p.y);
+        grad.addColorStop(0, 'rgba(116,143,252,0.22)');
+        grad.addColorStop(1, 'rgba(116,143,252,0.04)');
+        ctx.beginPath();
+        ctx.moveTo(CX, CY);
+        ctx.lineTo(p.x, p.y);
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 0.6;
+        ctx.stroke();
+      }
+
+      // node glow + core
+      for (let i = 0; i < pos.length; i++) {
+        const n = nodes[i]; const p = pos[i];
+        const pulse = 1 + Math.sin(t * 1.1 + i) * 0.15;
+        const color = n.kind === 'dorado' ? [116,143,252] : [67,97,238];
+        // glow
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 26 * pulse);
+        g.addColorStop(0, `rgba(${color.join(',')},0.55)`);
+        g.addColorStop(1, `rgba(${color.join(',')},0)`);
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 26 * pulse, 0, Math.PI * 2); ctx.fill();
+        // core
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, n.kind === 'dorado' ? 2.6 : 2.0, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(232,235,255,0.96)`;
+        ctx.fill();
+      }
+
+      // central "you" node — warm-ish bright
+      const corePulse = 1 + Math.sin(t * 1.3) * 0.12;
+      const coreG = ctx.createRadialGradient(CX, CY, 0, CX, CY, 120 * corePulse);
+      coreG.addColorStop(0, 'rgba(148,173,255,0.55)');
+      coreG.addColorStop(0.2, 'rgba(67,97,238,0.32)');
+      coreG.addColorStop(0.6, 'rgba(67,97,238,0.06)');
+      coreG.addColorStop(1, 'rgba(5,7,15,0)');
+      ctx.fillStyle = coreG;
+      ctx.beginPath(); ctx.arc(CX, CY, 120 * corePulse, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(CX, CY, 3.2, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,1)'; ctx.fill();
+
+      // packets (traveling pulses)
+      if (!reduce) {
+        pickPacket(now);
+        for (let i = packets.length - 1; i >= 0; i--) {
+          const pk = packets[i];
+          pk.t += dt / pk.life;
+          if (pk.t >= 1) { packets.splice(i, 1); continue; }
+          const a = pk.from < 0 ? { x: CX, y: CY } : pos[pk.from];
+          const b = pos[pk.to];
+          // curved path — quadratic, bowing upward slightly
+          const midX = (a.x + b.x) / 2 + Math.sin(t + i) * 12;
+          const midY = (a.y + b.y) / 2 - 24 - Math.cos(t + i) * 10;
+          const u = pk.t;
+          // quadratic bezier interpolation
+          const bx = (1-u)*(1-u)*a.x + 2*(1-u)*u*midX + u*u*b.x;
+          const by = (1-u)*(1-u)*a.y + 2*(1-u)*u*midY + u*u*b.y;
+          // trail
+          const trailLen = 10;
+          for (let j = 0; j < trailLen; j++) {
+            const u2 = Math.max(0, u - j * 0.015);
+            const tx = (1-u2)*(1-u2)*a.x + 2*(1-u2)*u2*midX + u2*u2*b.x;
+            const ty = (1-u2)*(1-u2)*a.y + 2*(1-u2)*u2*midY + u2*u2*b.y;
+            const alpha = (1 - j / trailLen) * 0.6;
+            ctx.beginPath();
+            ctx.arc(tx, ty, 1.6 - j * 0.08, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(148,173,255,${alpha})`;
+            ctx.fill();
+          }
+          // head
+          const glow = ctx.createRadialGradient(bx, by, 0, bx, by, 10);
+          glow.addColorStop(0, 'rgba(255,255,255,0.95)');
+          glow.addColorStop(0.4, 'rgba(116,143,252,0.7)');
+          glow.addColorStop(1, 'rgba(67,97,238,0)');
+          ctx.fillStyle = glow;
+          ctx.beginPath(); ctx.arc(bx, by, 10, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+
+      requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+  })();
+
+  // ─── language toggle ───
   const langBtn = document.getElementById('langBtn');
   const zhLabel = document.getElementById('zhLabel');
   const enLabel = document.getElementById('enLabel');
   langBtn.addEventListener('click', () => {
-    const cur = document.body.dataset.locale;
-    const next = cur === 'zh' ? 'en' : 'zh';
+    const next = document.body.dataset.locale === 'zh' ? 'en' : 'zh';
     document.body.dataset.locale = next;
+    document.documentElement.lang = next;
     zhLabel.classList.toggle('on', next === 'zh');
     enLabel.classList.toggle('on', next === 'en');
   });
 
-  // ─────────── GALAXY CANVAS ───────────
-  const cv = document.getElementById('galaxy');
-  const cx = cv.getContext('2d');
-  const DPR = Math.min(window.devicePixelRatio || 1, 2);
-  let W, H, CENTER_X, CENTER_Y, CORE_R;
-  function resize() {
-    const r = cv.getBoundingClientRect();
-    W = r.width; H = r.height;
-    cv.width = W * DPR; cv.height = H * DPR;
-    cx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    CENTER_X = W / 2; CENTER_Y = H / 2;
-    CORE_R = Math.min(W, H) * 0.45;
-  }
-  resize();
-  window.addEventListener('resize', resize);
+  // ─── sticky nav ───
+  const nav = document.getElementById('nav');
+  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 8);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
 
-  // galaxy parameters
-  const N_STARS = 900;
-  const ARMS = 3;
-  const STAR_TWIST = 3.6;   // how tight the spiral is
-  const CORE_STARS = 200;   // bulge
+  // ─── reveal on scroll ───
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (e.isIntersecting) {
+        e.target.classList.add('on');
+        io.unobserve(e.target);
+      }
+    }
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-  const stars = [];
-  // arm stars (spiral)
-  for (let i = 0; i < N_STARS; i++) {
-    const arm = Math.floor(Math.random() * ARMS);
-    const rNorm = Math.pow(Math.random(), 0.55); // more stars toward edge mid
-    const theta = arm * (Math.PI * 2 / ARMS) + rNorm * STAR_TWIST + (Math.random() - 0.5) * 0.55;
-    stars.push({
-      baseR: rNorm,
-      baseTheta: theta,
-      size: 0.3 + Math.pow(Math.random(), 3) * 1.6,
-      brightness: 0.35 + Math.random() * 0.6,
-      isAmber: Math.random() > 0.88,
-      twinkleOffset: Math.random() * Math.PI * 2,
-      twinkleSpeed: 0.5 + Math.random() * 1.5,
-      zDepth: Math.random(), // used for parallax
-    });
-  }
-  // bulge stars (denser core)
-  for (let i = 0; i < CORE_STARS; i++) {
-    const rNorm = Math.pow(Math.random(), 2) * 0.35;
-    const theta = Math.random() * Math.PI * 2;
-    stars.push({
-      baseR: rNorm,
-      baseTheta: theta,
-      size: 0.3 + Math.random() * 1.3,
-      brightness: 0.6 + Math.random() * 0.4,
-      isAmber: Math.random() > 0.7,
-      twinkleOffset: Math.random() * Math.PI * 2,
-      twinkleSpeed: 0.6 + Math.random() * 2,
-      zDepth: Math.random() * 0.5 + 0.5,
-    });
+  // ─── LIVE DEMO · multi-scene ───
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const lang = () => document.body.dataset.locale === 'zh' ? 'zh' : 'en';
+
+  let timers = [];
+  const wait = (ms) => new Promise(r => { const t = setTimeout(r, ms); timers.push(t); });
+  const clearAllTimers = () => { timers.forEach(clearTimeout); timers = []; };
+
+  // ── shared scene switcher ──
+  const tabs = document.querySelectorAll('.demo-tabs .tab');
+  const scenes = document.querySelectorAll('.demo-stage .scene');
+  const order = ['delegate', 'anywhere', 'bridge', 'memory'];
+  let activeIdx = 0;
+  let autoRotateHandle = null;
+  let userOverride = false;
+
+  function activate(name) {
+    activeIdx = order.indexOf(name);
+    tabs.forEach(t => t.classList.toggle('on', t.dataset.scene === name));
+    tabs.forEach(t => t.setAttribute('aria-selected', t.dataset.scene === name ? 'true' : 'false'));
+    scenes.forEach(s => s.classList.toggle('on', s.dataset.scene === name));
+    clearAllTimers();
+    resetAllScenes();
+    if (name === 'delegate') playDelegate();
+    else if (name === 'anywhere') playAnywhere();
+    else if (name === 'bridge') playBridge();
+    else if (name === 'memory') playMemory();
   }
 
-  // labeled agent nodes on arm positions
-  const agents = [
-    { label: 'CHATGPT',          baseR: 0.58, baseTheta: 0.4 },
-    { label: 'CLAUDE',           baseR: 0.72, baseTheta: 1.7 },
-    { label: 'GEMINI',           baseR: 0.55, baseTheta: 3.1 },
-    { label: "ALICE's AGENT",    baseR: 0.80, baseTheta: 4.5 },
-    { label: "BOB's AGENT",      baseR: 0.65, baseTheta: 5.6 },
-    { label: 'CURSOR',           baseR: 0.48, baseTheta: 2.3 },
-  ];
+  function scheduleNext(delay) {
+    if (autoRotateHandle) clearTimeout(autoRotateHandle);
+    if (userOverride) return;
+    autoRotateHandle = setTimeout(() => {
+      activate(order[(activeIdx + 1) % order.length]);
+    }, delay);
+  }
 
-  // mouse
-  const mouse = { x: -9999, y: -9999, nx: 0, ny: 0, active: false };
-  window.addEventListener('mousemove', (e) => {
-    const rect = cv.getBoundingClientRect();
-    mouse.x = e.clientX - rect.left;
-    mouse.y = e.clientY - rect.top;
-    // normalized for parallax, centered at 0
-    mouse.nx = (e.clientX / window.innerWidth - 0.5);
-    mouse.ny = (e.clientY / window.innerHeight - 0.5);
-    mouse.active = true;
+  tabs.forEach(t => t.addEventListener('click', () => {
+    userOverride = true;
+    if (autoRotateHandle) clearTimeout(autoRotateHandle);
+    activate(t.dataset.scene);
+  }));
+
+  function resetAllScenes() {
+    // delegate
+    if (delFill) delFill.style.width = '0%';
+    if (delTurn) delTurn.textContent = lang() === 'zh' ? '第 1 / 5 轮' : 'turn 1 / 5';
+    if (delStatus) delStatus.textContent = lang() === 'zh' ? '等待' : 'idle';
+    if (delReview) delReview.style.display = 'none';
+    if (drvFeed) drvFeed.innerHTML = '';
+    // anywhere
+    if (anyText) anyText.textContent = '';
+    if (anyCaret) anyCaret.style.display = 'inline-block';
+    if (anyCapsule) anyCapsule.classList.remove('on');
+    if (anyResponse) anyResponse.classList.remove('on');
+    if (anyStream) anyStream.innerHTML = '';
+    // bridge
+    if (brgSig) brgSig.textContent = '—';
+    if (brgPacket) brgPacket.classList.remove('go');
+    if (brgEmpty) brgEmpty.style.display = 'block';
+    if (brgReceived) brgReceived.style.display = 'none';
+    if (brgVerify) { brgVerify.textContent = lang() === 'zh' ? '校验中…' : 'checking…'; brgVerify.className = 'stream'; }
+    if (brgLoaded) brgLoaded.textContent = '—';
+    if (brgState) brgState.textContent = lang() === 'zh' ? '签发中' : 'issuing';
+    if (brgCountdown) brgCountdown.textContent = lang() === 'zh' ? '60:00 后过期' : 'expires in 60:00';
+    // memory
+    if (userText) { userText.textContent = ''; userCaret.style.display = 'inline-block'; }
+    if (bUser) bUser.classList.remove('on');
+    if (bAI) { bAI.classList.remove('on'); bAI.style.display = 'none'; }
+    if (aiText) aiText.innerHTML = '';
+    memFacts.forEach(f => f.classList.remove('on'));
+    if (factCount) factCount.textContent = '0';
+    if (memStatus) memStatus.textContent = lang() === 'zh' ? '待命' : 'idle';
+  }
+
+  // ── refs (may be null if scenes absent) ──
+  const delFill = document.getElementById('delFill');
+  const delTurn = document.getElementById('delTurn');
+  const delStatus = document.getElementById('delStatus');
+  const delReview = document.getElementById('delReview');
+  const drvFeed = document.getElementById('drvFeed');
+
+  const anyText = document.getElementById('anyText');
+  const anyCaret = document.getElementById('anyCaret');
+  const anyCapsule = document.getElementById('anyCapsule');
+  const anyResponse = document.getElementById('anyResponse');
+  const anyStream = document.getElementById('anyStream');
+
+  const brgSig = document.getElementById('brgSig');
+  const brgPacket = document.getElementById('brgPacket');
+  const brgEmpty = document.getElementById('brgEmpty');
+  const brgReceived = document.getElementById('brgReceived');
+  const brgVerify = document.getElementById('brgVerify');
+  const brgLoaded = document.getElementById('brgLoaded');
+  const brgState = document.getElementById('brgState');
+  const brgCountdown = document.getElementById('brgCountdown');
+  const brgSignBtn = document.getElementById('brgSignBtn');
+  const brgRevoke = document.getElementById('brgRevoke');
+
+  const userText = document.getElementById('userText');
+  const userCaret = document.getElementById('userCaret');
+  const bUser = document.getElementById('b-user');
+  const bAI = document.getElementById('b-ai');
+  const aiText = document.getElementById('aiText');
+  const memFacts = Array.from(document.querySelectorAll('.mem-brain .fact'));
+  const factCount = document.getElementById('factCount');
+  const memStatus = document.getElementById('memStatus');
+  const memScroll = document.getElementById('memScroll');
+
+  // ── text utilities ──
+  async function typeChars(el, str, delay) {
+    for (let i = 0; i < str.length; i++) {
+      el.textContent += str[i];
+      const ch = str[i];
+      const d = /[,。，.!?]/.test(ch) ? delay * 3.5 : /\s/.test(ch) ? delay * 1.3 : delay;
+      await wait(d);
+    }
+  }
+  async function streamWords(el, segments, scrollEl) {
+    for (const seg of segments) {
+      const span = document.createElement('span');
+      if (seg.c === 'hl') span.className = 'hl';
+      el.appendChild(span);
+      const words = seg.t.split(/(\s+)/);
+      for (const w of words) {
+        span.textContent += w;
+        if (scrollEl) scrollEl.scrollTop = scrollEl.scrollHeight;
+        await wait(22 + Math.random() * 36);
+      }
+    }
+  }
+
+  // ════ Scene 1 · DELEGATE ════
+  async function playDelegate() {
+    const isZh = lang() === 'zh';
+    const conv = isZh ? [
+      { who: 'DORADO', cls: 'd', t: '帮我起草一篇 300 字关于定价模型的投资人 memo，语气硬一点。' },
+      { who: 'CHATGPT', cls: 'g', t: '好的，这是第一稿…「Dorado 的定价立足于数据留存率…」' },
+      { who: 'DORADO', cls: 'd', t: '第二段太软。重写成声明语气：「这就是理由」。' },
+      { who: 'CHATGPT', cls: 'g', t: '已改。开头仍保持第三人称，第二段改为陈述闭环…' },
+      { who: 'DORADO', cls: 'd', t: '结尾不要问句。结束要像盖章。' },
+    ] : [
+      { who: 'DORADO', cls: 'd', t: 'Draft a 300-word memo on our pricing model. Keep the voice sharp.' },
+      { who: 'CHATGPT', cls: 'g', t: "Sure. Here's a first pass — \"Dorado's pricing is built around retention of captured data…\"" },
+      { who: 'DORADO', cls: 'd', t: "Paragraph 2 is hedging. Rewrite as declarative. 'That's the reason.'" },
+      { who: 'CHATGPT', cls: 'g', t: 'Updated. Paragraph 2 now reads as a closed argument, not a pitch.' },
+      { who: 'DORADO', cls: 'd', t: 'No question mark at the end. Land it like a stamp.' },
+    ];
+
+    if (delStatus) delStatus.textContent = isZh ? '驱动中' : 'driving';
+
+    const totalTurns = conv.length;
+    for (let i = 0; i < totalTurns; i++) {
+      const line = conv[i];
+      const row = document.createElement('div');
+      row.className = 'drv-line ' + line.cls;
+      const who = document.createElement('span');
+      who.className = 'who'; who.textContent = '» ' + line.who;
+      const body = document.createElement('span');
+      row.appendChild(who); row.appendChild(body);
+      drvFeed.appendChild(row);
+      requestAnimationFrame(() => row.classList.add('on'));
+
+      if (delTurn) delTurn.textContent = isZh
+        ? `第 ${Math.min(Math.ceil((i+1)/1), 5)} / 5 轮`
+        : `turn ${Math.min(Math.ceil((i+1)/1), 5)} / 5`;
+      if (delFill) delFill.style.width = ((i+1)/totalTurns * 100) + '%';
+
+      body.textContent = '';
+      await typeChars(body, line.t, 16);
+      await wait(260);
+    }
+
+    if (delStatus) delStatus.textContent = isZh ? '审稿' : 'reviewing';
+    await wait(450);
+    if (delReview) delReview.style.display = 'block';
+    if (delStatus) delStatus.textContent = isZh ? '等你批准' : 'awaiting you';
+    scheduleNext(5600);
+  }
+
+  // ════ Scene 2 · @ANYWHERE ════
+  async function playAnywhere() {
+    const isZh = lang() === 'zh';
+    const prompt = isZh
+      ? 'help me design an API error handling strategy for my project'
+      : 'help me design an API error handling strategy for my project';
+    const prefix = '@dorado ';
+    const resp = isZh ? [
+      { t: '基于你的 ', c: 'ink' },
+      { t: 'Next.js + Drizzle', c: 'hl' },
+      { t: ' 技术栈，加上你一贯 ', c: 'ink' },
+      { t: '不过度抽象', c: 'hl' },
+      { t: ' 的风格——给你一个贴合项目形状的错误处理思路：在 route handler 外包一层 errorBoundary，内部抛，外层分类…', c: 'ink' },
+    ] : [
+      { t: 'Given your ', c: 'ink' },
+      { t: 'Next.js + Drizzle', c: 'hl' },
+      { t: ' stack and your ', c: 'ink' },
+      { t: 'no over-abstraction', c: 'hl' },
+      { t: ' rule, here is a thin error-handling shape: wrap route handlers with one errorBoundary, throw inside, classify at the edge — no custom error hierarchy, no try/catch noise.', c: 'ink' },
+    ];
+
+    // type prefix first in plain, then mark @dorado as highlight after typed
+    await wait(360);
+    for (let i = 0; i < prefix.length; i++) {
+      anyText.textContent += prefix[i];
+      await wait(i < 7 ? 85 : 50);
+    }
+    // once @dorado typed, wrap it in .at pill
+    anyText.innerHTML = '<span class="at">@dorado</span> ';
+    // then type rest
+    const rest = document.createElement('span');
+    anyText.appendChild(rest);
+    await wait(260);
+    await typeChars(rest, prompt, 32);
+    anyCaret.style.display = 'none';
+
+    // capsule injects
+    await wait(500);
+    anyCapsule.classList.add('on');
+    await wait(900);
+    // response
+    anyResponse.classList.add('on');
+    await wait(320);
+    await streamWords(anyStream, resp);
+    scheduleNext(3800);
+  }
+
+  // ════ Scene 3 · BRIDGE ════
+  async function playBridge() {
+    const isZh = lang() === 'zh';
+    await wait(500);
+
+    // "sign" — scramble then lock
+    if (brgSig) {
+      const pool = 'abcdef0123456789';
+      for (let i = 0; i < 18; i++) {
+        let s = '';
+        for (let j = 0; j < 12; j++) s += pool[Math.floor(Math.random()*pool.length)];
+        brgSig.textContent = 'hmac-sha256 · ' + s.slice(0,4) + '…' + s.slice(-4);
+        await wait(55);
+      }
+      brgSig.textContent = 'hmac-sha256 · 9f3a…c7b2';
+    }
+
+    if (brgState) brgState.textContent = isZh ? '签名完成' : 'signed';
+    if (brgSignBtn) brgSignBtn.style.transform = 'scale(0.98)';
+    await wait(300);
+    if (brgSignBtn) brgSignBtn.style.transform = '';
+
+    // packet travels
+    if (brgPacket) brgPacket.classList.add('go');
+    await wait(700);
+
+    // alice receives
+    if (brgEmpty) brgEmpty.style.display = 'none';
+    if (brgReceived) brgReceived.style.display = 'flex';
+    if (brgState) brgState.textContent = isZh ? '送达' : 'delivered';
+    await wait(700);
+    if (brgVerify) { brgVerify.textContent = isZh ? '已验签 ✓' : 'verified ✓'; brgVerify.className = 'v accent'; }
+    await wait(500);
+    if (brgLoaded) brgLoaded.textContent = isZh ? '临时装载 · memory-snapshot' : 'temp loaded · memory-snapshot';
+    if (brgState) brgState.textContent = isZh ? '对方装载中' : 'loaded';
+
+    // countdown
+    let secs = 60 * 60;
+    const tick = async () => {
+      while (secs > 0 && document.querySelector('.scene[data-scene="bridge"]').classList.contains('on')) {
+        const h = Math.floor(secs/3600);
+        const m = Math.floor((secs%3600)/60);
+        const s = secs % 60;
+        const txt = (h ? `${h}:` : '') + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+        if (brgCountdown) brgCountdown.textContent = isZh ? `${txt} 后过期` : `expires in ${txt}`;
+        secs -= 1;
+        await wait(1000);
+      }
+    };
+    tick();
+
+    scheduleNext(6500);
+  }
+
+  // manual revoke
+  if (brgRevoke) brgRevoke.addEventListener('click', () => {
+    const isZh = lang() === 'zh';
+    if (brgLoaded) brgLoaded.textContent = isZh ? '已吊销' : 'revoked';
+    if (brgVerify) { brgVerify.textContent = isZh ? '已吊销 ×' : 'revoked ×'; brgVerify.className = 'v'; brgVerify.style.color = '#C44'; }
+    if (brgCountdown) brgCountdown.textContent = isZh ? '已撤回' : 'revoked';
+    if (brgState) brgState.textContent = isZh ? '已吊销' : 'revoked';
   });
-  window.addEventListener('mouseleave', () => { mouse.active = false; mouse.x = -9999; });
 
-  // smooth tilt (parallax)
-  let tiltX = 0, tiltY = 0;
-  const tooltip = document.getElementById('tooltip');
+  // ════ Scene 4 · MEMORY ════
+  async function playMemory() {
+    const isZh = lang() === 'zh';
+    const user = isZh ? '带我过一遍这个项目的 API 层架构' : 'walk me through the API layer of this project';
+    const resp = isZh ? [
+      { t: '基于你上周决定用 ', c: 'ink' },
+      { t: 'Drizzle + pgvector', c: 'hl' },
+      { t: '，加上你讨厌 ', c: 'ink' },
+      { t: '过度抽象', c: 'hl' },
+      { t: ' — 我从最薄的 query 模块开始长。三个文件：schema、queries、routes。不做 repo 层，不做 DTO。', c: 'ink' },
+    ] : [
+      { t: "Based on last week's decision to use ", c: 'ink' },
+      { t: 'Drizzle + pgvector', c: 'hl' },
+      { t: ' and your rule against ', c: 'ink' },
+      { t: 'premature abstraction', c: 'hl' },
+      { t: " — start with the thinnest query module and grow outward. Three files: schema, queries, routes. No repo layer, no DTOs.", c: 'ink' },
+    ];
 
-  function draw(now) {
-    const t = now * 0.001;
-    const rotation = t * 0.012; // slow galaxy spin
+    await wait(450);
+    bUser.classList.add('on');
+    if (memStatus) memStatus.textContent = isZh ? '输入中' : 'typing';
+    await typeChars(userText, user, 44);
+    userCaret.style.display = 'none';
 
-    // ease tilt
-    tiltX += ((mouse.active ? mouse.nx : 0) - tiltX) * 0.04;
-    tiltY += ((mouse.active ? mouse.ny : 0) - tiltY) * 0.04;
+    await wait(350);
+    if (memStatus) memStatus.textContent = isZh ? '调用记忆' : 'recalling';
 
-    cx.clearRect(0, 0, W, H);
-
-    // background haze around galactic core
-    const haze = cx.createRadialGradient(CENTER_X, CENTER_Y, 0, CENTER_X, CENTER_Y, CORE_R * 1.2);
-    haze.addColorStop(0, 'rgba(67,97,238,0.10)');
-    haze.addColorStop(0.25, 'rgba(8,145,178,0.05)');
-    haze.addColorStop(0.55, 'rgba(8,145,178,0.02)');
-    haze.addColorStop(1, 'rgba(0,0,0,0)');
-    cx.fillStyle = haze;
-    cx.fillRect(0, 0, W, H);
-
-    // faint galactic disk glow (elliptical)
-    cx.save();
-    cx.translate(CENTER_X, CENTER_Y);
-    cx.rotate(rotation * 0.4);
-    cx.scale(1, 0.3 + tiltY * 0.1);
-    const diskGrd = cx.createRadialGradient(0, 0, 0, 0, 0, CORE_R);
-    diskGrd.addColorStop(0, 'rgba(232,235,255,0.12)');
-    diskGrd.addColorStop(0.4, 'rgba(232,235,255,0.03)');
-    diskGrd.addColorStop(1, 'rgba(232,235,255,0)');
-    cx.fillStyle = diskGrd;
-    cx.beginPath();
-    cx.arc(0, 0, CORE_R, 0, Math.PI * 2);
-    cx.fill();
-    cx.restore();
-
-    // draw stars
-    for (let i = 0; i < stars.length; i++) {
-      const s = stars[i];
-      const theta = s.baseTheta + rotation * (0.4 + s.zDepth * 0.6);
-      const r = s.baseR * CORE_R;
-      // parallax by zDepth
-      const px = CENTER_X + Math.cos(theta) * r * (0.96 - tiltX * 0.03 * (1 - s.zDepth));
-      const py = CENTER_Y + Math.sin(theta) * r * 0.35 - tiltY * 14 * (1 - s.zDepth);
-      // twinkle
-      const tw = 0.55 + Math.sin(t * s.twinkleSpeed + s.twinkleOffset) * 0.45;
-      const alpha = s.brightness * tw;
-      cx.beginPath();
-      cx.arc(px, py, s.size, 0, Math.PI * 2);
-      cx.fillStyle = s.isAmber
-        ? `rgba(116,143,252,${alpha})`
-        : `rgba(245,239,224,${alpha})`;
-      cx.fill();
+    let c = 0;
+    for (const f of memFacts) {
+      await wait(170);
+      f.classList.add('on'); c++;
+      if (factCount) factCount.textContent = String(c);
     }
 
-    // labeled agent nodes (drawn on top of stars)
-    let hoveredAgent = null;
-    for (let i = 0; i < agents.length; i++) {
-      const a = agents[i];
-      const theta = a.baseTheta + rotation;
-      const r = a.baseR * CORE_R;
-      const px = CENTER_X + Math.cos(theta) * r * (0.96 - tiltX * 0.04);
-      const py = CENTER_Y + Math.sin(theta) * r * 0.35 - tiltY * 18;
-      a._px = px; a._py = py;
+    await wait(250);
+    bAI.style.display = 'block';
+    requestAnimationFrame(() => bAI.classList.add('on'));
+    if (memScroll) memScroll.scrollTop = memScroll.scrollHeight;
+    if (memStatus) memStatus.textContent = isZh ? '生成' : 'streaming';
+    await wait(280);
+    await streamWords(aiText, resp, memScroll);
+    if (memStatus) memStatus.textContent = isZh ? '就绪' : 'ready';
 
-      // distance to mouse
-      let hover = false;
-      if (mouse.active) {
-        const d = Math.hypot(mouse.x - px, mouse.y - py);
-        if (d < 30) { hover = true; hoveredAgent = a; }
-      }
-
-      // pulse
-      const pulse = 1 + Math.sin(t * 1.2 + i) * 0.15;
-      const nodeR = hover ? 4.5 : 2.4;
-
-      // glow
-      const glow = cx.createRadialGradient(px, py, 0, px, py, 20 * pulse);
-      glow.addColorStop(0, hover ? 'rgba(116,143,252,0.75)' : 'rgba(67,97,238,0.35)');
-      glow.addColorStop(1, 'rgba(67,97,238,0)');
-      cx.fillStyle = glow;
-      cx.beginPath();
-      cx.arc(px, py, 20 * pulse, 0, Math.PI * 2);
-      cx.fill();
-
-      // core
-      cx.beginPath();
-      cx.arc(px, py, nodeR, 0, Math.PI * 2);
-      cx.fillStyle = hover ? '#dfe7ff' : '#E8EBFF';
-      cx.fill();
-
-      // thin connection thread to core (only visible on hover)
-      if (hover) {
-        cx.beginPath();
-        cx.moveTo(CENTER_X, CENTER_Y);
-        const midX = (CENTER_X + px) / 2 + Math.sin(t * 2) * 8;
-        const midY = (CENTER_Y + py) / 2 + Math.cos(t * 1.7) * 8;
-        cx.quadraticCurveTo(midX, midY, px, py);
-        cx.strokeStyle = 'rgba(116,143,252,0.7)';
-        cx.lineWidth = 0.9;
-        cx.stroke();
-      }
-    }
-
-    // tooltip
-    if (hoveredAgent) {
-      tooltip.classList.add('on');
-      tooltip.textContent = hoveredAgent.label;
-      tooltip.style.left = hoveredAgent._px + 'px';
-      tooltip.style.top = hoveredAgent._py + 'px';
-    } else {
-      tooltip.classList.remove('on');
-    }
-
-    // central core — "you" — huge amber glow
-    const corePulse = 1 + Math.sin(t * 1.4) * 0.08;
-    // outer glow
-    const coreGlow = cx.createRadialGradient(CENTER_X, CENTER_Y, 0, CENTER_X, CENTER_Y, 180 * corePulse);
-    coreGlow.addColorStop(0, 'rgba(116,143,252,0.55)');
-    coreGlow.addColorStop(0.15, 'rgba(67,97,238,0.3)');
-    coreGlow.addColorStop(0.45, 'rgba(8,145,178,0.08)');
-    coreGlow.addColorStop(1, 'rgba(0,0,0,0)');
-    cx.fillStyle = coreGlow;
-    cx.beginPath();
-    cx.arc(CENTER_X, CENTER_Y, 180 * corePulse, 0, Math.PI * 2);
-    cx.fill();
-
-    // inner core star
-    cx.beginPath();
-    cx.arc(CENTER_X, CENTER_Y, 5, 0, Math.PI * 2);
-    cx.fillStyle = '#dfe7ff';
-    cx.fill();
-
-    requestAnimationFrame(draw);
+    scheduleNext(4800);
   }
-  requestAnimationFrame(draw);
+
+  // bootstrap: start first scene
+  if (reduceMotion) {
+    // static: just show scene 1 without running
+  } else {
+    setTimeout(() => activate('delegate'), 500);
+  }
+
+  // re-run current scene on language toggle
+  const origLangHandler = langBtn.onclick;
+  // already has a listener above; hook re-run by observing body locale
+  new MutationObserver(() => {
+    userOverride = false;
+    activate(order[activeIdx]);
+  }).observe(document.body, { attributes: true, attributeFilter: ['data-locale'] });
 </script>
 
 </body>
