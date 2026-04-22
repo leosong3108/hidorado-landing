@@ -1063,35 +1063,71 @@
   .feat-tag.soon { color: var(--ink-ghost); }
   .feat-tag.soon .dot { background: var(--ink-ghost); box-shadow: none; }
 
-  /* ─────────── HOW IT WORKS ─────────── */
-  .steps {
-    display: grid; grid-template-columns: 1fr; gap: 1px;
-    background: var(--hairline);
-    border: 1px solid var(--hairline);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
+  /* ─────────── HOW IT WORKS · FLOW ─────────── */
+  .flow-wrap { display: flex; justify-content: center; margin-top: 56px; }
+  .flow-col {
+    display: flex; flex-direction: column; align-items: center;
+    width: 100%; max-width: 520px;
   }
-  @media (min-width: 820px) { .steps { grid-template-columns: repeat(3, 1fr); } }
-  .step { background: var(--surface); padding: 32px 28px; }
-  .step-n {
-    font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif; font-weight: 500;
-    font-size: 48px; color: var(--accent);
-    line-height: 1; letter-spacing: -0.02em;
-    margin-bottom: 14px;
+  .fnode {
+    width: 100%; background: var(--surface);
+    border: 1px solid var(--hairline); border-radius: var(--radius-lg);
+    padding: 18px 22px; display: flex; align-items: center; gap: 14px;
   }
-  .step-n em { font-style: normal; }
-  .step-title {
-    font-family: "Inter", "Noto Sans SC", ui-sans-serif, system-ui, sans-serif;
-    font-weight: 400; font-size: 21px;
-    color: var(--ink); margin-bottom: 8px;
-    letter-spacing: -0.01em;
+  .fnode-agent {
+    border-color: rgba(67,97,238,0.45);
+    background: linear-gradient(160deg, rgba(67,97,238,0.09), var(--surface));
+    box-shadow: 0 0 36px -10px rgba(67,97,238,0.3), inset 0 0 0 1px rgba(116,143,252,0.1);
   }
-  .step-body { color: var(--ink-soft); font-size: 14.5px; line-height: 1.6; }
-  .step-meta {
-    margin-top: 14px;
-    font-family: "JetBrains Mono", ui-monospace, monospace;
-    font-size: 10.5px; color: var(--ink-dim);
-    letter-spacing: 0.14em;
+  .fnode-ic {
+    flex-shrink: 0; width: 38px; height: 38px; border-radius: 9px;
+    border: 1px solid rgba(116,143,252,0.22);
+    background: linear-gradient(145deg, rgba(67,97,238,0.18), rgba(67,97,238,0.04));
+    display: flex; align-items: center; justify-content: center; color: var(--accent-hi);
+  }
+  .fnode-ic svg { width: 18px; height: 18px; }
+  .fnode-info { flex: 1; min-width: 0; }
+  .fnode-label {
+    font-family: "Inter", sans-serif; font-weight: 700;
+    font-size: 14.5px; color: var(--ink); letter-spacing: -0.01em;
+  }
+  .fnode-agent .fnode-label { color: var(--accent-hi); }
+  .fnode-sub {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px; color: var(--ink-dim); letter-spacing: 0.08em; margin-top: 3px;
+  }
+  .fnode-badge {
+    font-family: "JetBrains Mono", monospace; font-size: 9.5px;
+    color: var(--accent); letter-spacing: 0.14em;
+    border: 1px solid rgba(67,97,238,0.3); padding: 2px 8px;
+    border-radius: 4px; background: rgba(67,97,238,0.08); white-space: nowrap;
+  }
+  .fconn {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 4px; padding: 2px 0; width: 100%;
+  }
+  .fconn-track {
+    position: relative; width: 2px; height: 44px;
+    background: linear-gradient(to bottom, transparent, var(--hairline) 20%, var(--hairline) 80%, transparent);
+  }
+  .fconn-label {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 9.5px; color: var(--ink-ghost); letter-spacing: 0.12em; text-align: center;
+  }
+  .fpkt {
+    display: block; position: absolute;
+    left: 50%; transform: translateX(-50%);
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent); box-shadow: 0 0 10px 2px rgba(67,97,238,0.55);
+    animation: pktFlow 2s ease-in-out infinite; animation-fill-mode: both;
+  }
+  .fpkt.d2 { animation-delay: 0.67s; }
+  .fpkt.d3 { animation-delay: 1.33s; }
+  @keyframes pktFlow {
+    0%   { top: -4px; opacity: 0; }
+    8%   { opacity: 1; }
+    92%  { opacity: 1; }
+    100% { top: calc(100% + 4px); opacity: 0; }
   }
 
   /* ─────────── DARK PANEL ─────────── */
@@ -1715,38 +1751,91 @@
     <div class="block-head reveal">
       <div class="block-eyebrow"><span class="en">How it works</span><span class="zh">原理</span></div>
       <h2 class="block-title">
-        <span class="en">Three layers of memory,<br><em>loaded every turn.</em></span>
-        <span class="zh">三层记忆，<br><em>每次对话前都装进去。</em></span>
+        <span class="en">You give the goal.<br><em>The loop does the rest.</em></span>
+        <span class="zh">你说目标，<br><em>循环完成剩下的。</em></span>
       </h2>
     </div>
 
-    <div class="steps">
-      <div class="step reveal">
-        <div class="step-n"><em>01</em></div>
-        <div class="step-title"><span class="en">Structured facts</span><span class="zh">结构化事实</span></div>
-        <p class="step-body">
-          <span class="en">Identity, stack, preferences, constraints. Sentence-level truth — explicit fields you can browse and edit.</span>
-          <span class="zh">身份、技术栈、偏好、约束。一句话级的事实——可以浏览、可以编辑。</span>
-        </p>
-        <div class="step-meta">L1 · facts table</div>
-      </div>
-      <div class="step reveal">
-        <div class="step-n"><em>02</em></div>
-        <div class="step-title"><span class="en">Project context</span><span class="zh">项目上下文</span></div>
-        <p class="step-body">
-          <span class="en">What you're building, where you are, what you decided. Namespaced per project, auto-tracked from conversation.</span>
-          <span class="zh">你在做什么、进到哪了、决定过什么。每个项目独立命名空间，从对话中自动追踪。</span>
-        </p>
-        <div class="step-meta">L2 · projects + decisions</div>
-      </div>
-      <div class="step reveal">
-        <div class="step-n"><em>03</em></div>
-        <div class="step-title"><span class="en">Episodic memory</span><span class="zh">语义记忆</span></div>
-        <p class="step-body">
-          <span class="en">pgvector HNSW + BGE-M3 embeddings. Relevant past episodes recalled by meaning, not keyword — injected as the context gets heavy.</span>
-          <span class="zh">pgvector HNSW + BGE-M3 向量。按语义调出相关对话片段——上下文重了就靠它。</span>
-        </p>
-        <div class="step-meta">L3 · pgvector · BGE-M3</div>
+    <div class="flow-wrap reveal">
+      <div class="flow-col">
+
+        <!-- YOU -->
+        <div class="fnode">
+          <div class="fnode-ic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          </div>
+          <div class="fnode-info">
+            <div class="fnode-label"><span class="en">You</span><span class="zh">你</span></div>
+            <div class="fnode-sub"><span class="en">give the goal</span><span class="zh">说明目标</span></div>
+          </div>
+        </div>
+
+        <div class="fconn">
+          <div class="fconn-track"><span class="fpkt"></span><span class="fpkt d2"></span></div>
+          <div class="fconn-label"><span class="en">conversation</span><span class="zh">对话</span></div>
+        </div>
+
+        <!-- YOUR AGENT -->
+        <div class="fnode fnode-agent">
+          <div class="fnode-ic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.9 2.6 2.6.9-2.6.9L19 22.5l-.9-2.6-2.6-.9 2.6-.9z"/></svg>
+          </div>
+          <div class="fnode-info">
+            <div class="fnode-label"><span class="en">Your Agent</span><span class="zh">你的 Agent</span></div>
+            <div class="fnode-sub"><span class="en">L1 facts · L2 projects · L3 episodic · full context loaded</span><span class="zh">L1 事实 · L2 项目 · L3 语义 · 完整上下文已加载</span></div>
+          </div>
+          <div class="fnode-badge">DoraDo</div>
+        </div>
+
+        <div class="fconn">
+          <div class="fconn-track"><span class="fpkt"></span><span class="fpkt d2"></span></div>
+          <div class="fconn-label"><span class="en">delegates task</span><span class="zh">委派任务</span></div>
+        </div>
+
+        <!-- CLAUDE CODE -->
+        <div class="fnode">
+          <div class="fnode-ic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+          </div>
+          <div class="fnode-info">
+            <div class="fnode-label"><span class="en">Claude Code</span><span class="zh">Claude Code</span></div>
+            <div class="fnode-sub"><span class="en">executes tools · stateless · no memory of you</span><span class="zh">执行工具 · 无状态 · 不了解你</span></div>
+          </div>
+        </div>
+
+        <div class="fconn">
+          <div class="fconn-track"><span class="fpkt"></span><span class="fpkt d2"></span></div>
+          <div class="fconn-label"><span class="en">code · results</span><span class="zh">代码 · 结果</span></div>
+        </div>
+
+        <!-- AGENT REVIEWS -->
+        <div class="fnode fnode-agent">
+          <div class="fnode-ic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="fnode-info">
+            <div class="fnode-label"><span class="en">Agent reviews</span><span class="zh">Agent 审查</span></div>
+            <div class="fnode-sub"><span class="en">checks quality · filters noise · speaks in your voice</span><span class="zh">检查质量 · 过滤噪音 · 用你的语气回复</span></div>
+          </div>
+          <div class="fnode-badge">DoraDo</div>
+        </div>
+
+        <div class="fconn">
+          <div class="fconn-track"><span class="fpkt"></span></div>
+          <div class="fconn-label"><span class="en">only what matters</span><span class="zh">只保留有用的</span></div>
+        </div>
+
+        <!-- RESULT: YOU -->
+        <div class="fnode">
+          <div class="fnode-ic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>
+          </div>
+          <div class="fnode-info">
+            <div class="fnode-label"><span class="en">You</span><span class="zh">你</span></div>
+            <div class="fnode-sub"><span class="en">see only the approved result</span><span class="zh">只看到审批后的结果</span></div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
