@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Dorado OG</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 1200px;
+    height: 630px;
+    overflow: hidden;
+    background: #05070F;
+    color: #F2F4FF;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .canvas {
+    position: relative;
+    width: 1200px;
+    height: 630px;
+    padding: 48px 72px 0;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 700px 500px at 88% 50%, rgba(67,97,238,0.28), transparent 70%),
+      radial-gradient(ellipse 500px 400px at 8% 90%, rgba(8,145,178,0.10), transparent 70%),
+      linear-gradient(180deg, #05070F 0%, #0A0E1E 100%);
+  }
+
+  /* faint star field */
+  .stars {
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 12% 18%, rgba(232,235,255,0.5), transparent),
+      radial-gradient(1px 1px at 26% 76%, rgba(232,235,255,0.4), transparent),
+      radial-gradient(1.2px 1.2px at 38% 30%, rgba(232,235,255,0.55), transparent),
+      radial-gradient(1px 1px at 54% 64%, rgba(232,235,255,0.35), transparent),
+      radial-gradient(1px 1px at 68% 22%, rgba(232,235,255,0.45), transparent),
+      radial-gradient(1px 1px at 82% 80%, rgba(232,235,255,0.4), transparent),
+      radial-gradient(1.4px 1.4px at 92% 12%, rgba(232,235,255,0.6), transparent),
+      radial-gradient(1px 1px at 18% 50%, rgba(232,235,255,0.3), transparent),
+      radial-gradient(1px 1px at 46% 88%, rgba(232,235,255,0.35), transparent),
+      radial-gradient(1px 1px at 74% 50%, rgba(232,235,255,0.4), transparent);
+    pointer-events: none;
+  }
+
+  .top {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    z-index: 2;
+  }
+  .top-mark { width: 36px; height: 36px; }
+  .top-word {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: 0.12em;
+    color: #F2F4FF;
+  }
+
+  .center {
+    position: absolute;
+    z-index: 2;
+    top: 50%;
+    left: 72px;
+    right: 72px;
+    transform: translateY(-50%);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 60px;
+  }
+
+  .copy {
+    max-width: 720px;
+  }
+
+  .headline {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 76px;
+    line-height: 1.0;
+    letter-spacing: -0.025em;
+    color: #F2F4FF;
+    margin-bottom: 22px;
+  }
+  .headline em {
+    font-style: normal;
+    background: linear-gradient(120deg, #748FFC 0%, #4361EE 60%, #22D3EE 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .sub {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 1.42;
+    color: #B5BBD6;
+    max-width: 600px;
+  }
+
+  .mark-wrap {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .mark-glow {
+    position: absolute;
+    inset: -40px;
+    background: radial-gradient(circle, rgba(67,97,238,0.45) 0%, transparent 65%);
+    filter: blur(20px);
+  }
+  .mark-svg { position: relative; width: 200px; height: 200px; }
+
+  .bottom {
+    position: absolute;
+    z-index: 2;
+    left: 72px;
+    right: 72px;
+    bottom: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid rgba(232,235,255,0.10);
+    padding-top: 28px;
+  }
+  .pills {
+    display: flex;
+    gap: 10px;
+  }
+  .pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    padding: 8px 14px;
+    border: 1px solid rgba(232,235,255,0.16);
+    border-radius: 999px;
+    color: #B5BBD6;
+    background: rgba(16,21,42,0.6);
+  }
+  .pill.accent {
+    color: #748FFC;
+    border-color: rgba(116,143,252,0.35);
+    background: rgba(67,97,238,0.10);
+  }
+  .url {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    font-size: 16px;
+    color: #7E85A0;
+    letter-spacing: 0.05em;
+  }
+</style>
+</head>
+<body>
+  <div class="canvas">
+    <div class="stars"></div>
+
+    <div class="top">
+      <svg class="top-mark" viewBox="0 0 48 48" fill="none">
+        <path d="M 12 12 C 22 12, 26 16, 26 24 C 26 32, 22 36, 12 36 L 12 12 Z" fill="#4361EE"/>
+        <path d="M 36 12 C 26 12, 22 16, 22 24 C 22 32, 26 36, 36 36 L 36 12 Z" fill="#748FFC" fill-opacity="0.9"/>
+        <circle cx="24" cy="24" r="1.8" fill="#F2F4FF"/>
+      </svg>
+      <div class="top-word">DORADO</div>
+    </div>
+
+    <div class="center">
+      <div class="copy">
+        <div class="headline">Send your <em>Agent</em><br>to do it.</div>
+        <div class="sub">
+          Open-source AI Agent with persistent memory.
+          Drives ChatGPT, hands signed context between Agents.
+        </div>
+      </div>
+      <div class="mark-wrap">
+        <div class="mark-glow"></div>
+        <svg class="mark-svg" viewBox="0 0 48 48" fill="none">
+          <path d="M 12 12 C 22 12, 26 16, 26 24 C 26 32, 22 36, 12 36 L 12 12 Z" fill="#4361EE"/>
+          <path d="M 36 12 C 26 12, 22 16, 22 24 C 22 32, 26 36, 36 36 L 36 12 Z" fill="#748FFC" fill-opacity="0.9"/>
+          <circle cx="24" cy="24" r="2.4" fill="#F2F4FF"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="bottom">
+      <div class="pills">
+        <span class="pill accent">A2A protocol</span>
+        <span class="pill">MIT · open source</span>
+        <span class="pill">self-hosted</span>
+      </div>
+      <div class="url">hidorado.com</div>
+    </div>
+  </div>
+</body>
+</html>
