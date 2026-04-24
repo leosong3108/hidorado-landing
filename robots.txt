@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# Internal/design-only pages — don't index
+Disallow: /app-header
+Disallow: /back
+Disallow: /logo-arc
+Disallow: /logo-fish
+Disallow: /logo-lens
+Disallow: /logo-lens-v2
+Disallow: /logo-options
+Disallow: /logo-wordmark
+
+Sitemap: https://hidorado.com/sitemap.xml
